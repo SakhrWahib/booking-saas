@@ -41,7 +41,7 @@
                         </div>
                         <p class="mb-3 line-clamp-2 flex-1 text-sm text-slate-500">{{ $product->short_description }}</p>
                         <div class="flex items-center justify-between border-t border-slate-100 pt-3">
-                            <span class="text-xs text-slate-500"><i class="fa-solid fa-user-tie ms-1"></i> {{ $product->service_providers_count }} {{ config('brand.provider_label') }}</span>
+                            <span class="text-xs text-slate-500"><i class="fa-solid fa-user-tie ms-1"></i> {{ count($product->service_provider_ids ?? []) }} {{ config('brand.provider_label') }}</span>
                             <div class="flex items-center gap-1">
                                 @if(auth()->user()->hasPermission('products.edit'))
                                     <form method="POST" action="{{ route('admin.products.toggle-status', $product) }}">@csrf

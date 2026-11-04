@@ -16,7 +16,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::withCount('serviceProviders')->orderBy('created_at', 'desc')->paginate(12);
+        $products = Product::orderBy('created_at', 'desc')->paginate(12);
         return view('admin.products.index', compact('products'));
     }
 
