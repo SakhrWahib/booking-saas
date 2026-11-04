@@ -11,6 +11,11 @@ return [
     'whatsapp' => env('BRAND_WHATSAPP', ''),    // مثال: 9665XXXXXXXX (بدون +)
     'email' => env('BRAND_EMAIL', ''),
     'address' => env('BRAND_ADDRESS', ''),
+    // بيانات التحويل البنكي: كل نشاط يدخلها من الإعدادات، والصفحة تتعطل إذا ما فيه آيبان
+    'bank_name' => env('BRAND_BANK_NAME', ''),
+    'bank_account_holder' => env('BRAND_BANK_ACCOUNT_HOLDER', ''),
+    'bank_iban' => env('BRAND_BANK_IBAN', ''),
+    'bank_account_number' => env('BRAND_BANK_ACCOUNT_NUMBER', ''),
     'primary_color' => env('BRAND_PRIMARY_COLOR', '#7c3aed'),
     'logo' => env('BRAND_LOGO', '/logo.png'),
     'service_label' => env('BRAND_SERVICE_LABEL', ''),

@@ -106,6 +106,29 @@
             </section>
 
             <section class="rounded-xl bg-white p-6 shadow-sm">
+                <h2 class="mb-1 font-semibold text-gray-800">التحويل البنكي</h2>
+                <p class="mb-4 text-sm text-gray-500">اتركها فارغة لإيقاف الدفع بالتحويل البنكي.</p>
+                <div class="grid gap-4 md:grid-cols-2">
+                    <label class="block">
+                        <span class="mb-1 block text-sm text-gray-700">اسم البنك</span>
+                        <input name="bank_name" value="{{ $val('bank_name') }}" class="{{ $field }}">
+                    </label>
+                    <label class="block">
+                        <span class="mb-1 block text-sm text-gray-700">اسم صاحب الحساب</span>
+                        <input name="bank_account_holder" value="{{ $val('bank_account_holder') }}" class="{{ $field }}">
+                    </label>
+                    <label class="block">
+                        <span class="mb-1 block text-sm text-gray-700">الآيبان</span>
+                        <input name="bank_iban" value="{{ $val('bank_iban') }}" placeholder="SA0000000000000000000000" dir="ltr" class="{{ $field }}">
+                    </label>
+                    <label class="block">
+                        <span class="mb-1 block text-sm text-gray-700">رقم الحساب</span>
+                        <input name="bank_account_number" value="{{ $val('bank_account_number') }}" dir="ltr" class="{{ $field }}">
+                    </label>
+                </div>
+            </section>
+
+            <section class="rounded-xl bg-white p-6 shadow-sm">
                 <h2 class="mb-1 font-semibold text-gray-800">المسميات</h2>
                 <p class="mb-4 text-sm text-gray-500">اتركها فارغة لاستخدام مسميات نوع النشاط تلقائيًا.</p>
                 <div class="grid gap-4 md:grid-cols-2">

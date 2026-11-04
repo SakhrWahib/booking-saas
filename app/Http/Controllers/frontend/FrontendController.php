@@ -1104,11 +1104,16 @@ class FrontendController extends Controller
             return redirect()->route('home')->with('error', 'يرجى إكمال الخطوات السابقة أولاً');
         }
 
+        // بيانات البنك من إعدادات النشاط
+        if (!config('brand.bank_iban')) {
+            return redirect()->back()->with('error', 'الدفع بالتحويل البنكي غير متاح حاليًا');
+        }
+
         $bankDetails = [
-            'bank_name' => 'اسم البنك',
-            'account_holder' => 'اسم صاحب الحساب',
-            'iban' => 'SA0000000000000000000000',
-            'account_number' => '00000000000000'
+            'bank_name' => config('brand.bank_name'),
+            'account_holder' => config('brand.bank_account_holder'),
+            'iban' => config('brand.bank_iban'),
+            'account_number' => config('brand.bank_account_number'),
         ];
 
         // استخدام البيانات المحفوظة في الجلسة

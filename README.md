@@ -58,7 +58,7 @@ Laravel 13 · PHP 8.3 · MySQL 8 · Sanctum 4 · Blade · Tailwind 3 · Vite · 
 ### GitHub Codespaces (no local setup)
 1. **Code → Codespaces → Create codespace on main**
 2. Wait for `.devcontainer/setup.sh` to install packages, start MySQL, run migrations and seeders, and build the frontend.
-3. Open port **8000** from the Ports tab. The admin panel is at `/admin/login`; seeded credentials are in `database/seeders/AdminSeeder.php`.
+3. Open port **8000** from the Ports tab. The admin panel is at `/admin/login`. Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env` before seeding, or the seeder prints a random password once.
 
 If the server stops: `php artisan serve --host=0.0.0.0 --port=8000`
 

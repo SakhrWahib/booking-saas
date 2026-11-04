@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AdminSeeder extends Seeder
 {
@@ -21,10 +22,17 @@ class AdminSeeder extends Seeder
         );
 
         // إنشاء مستخدم مدير النظام
+        // البريد وكلمة المرور من .env، وإذا ما فيه كلمة مرور تنولّد عشوائية وتنطبع مرة وحدة
+        $email = env('ADMIN_EMAIL', 'admin@example.com');
+        $password = env('ADMIN_PASSWORD') ?: Str::random(16);
+        if (!env('ADMIN_PASSWORD')) {
+            $this->command?->warn("Admin login: {$email} / {$password}");
+        }
+
         $owner = User::create([
             'name' => 'مدير النظام',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('change-me'),
+            'email' => $email,
+            'password' => Hash::make($password),
             'role_id' => $adminRole->id,
             'is_active' => true
         ]);
