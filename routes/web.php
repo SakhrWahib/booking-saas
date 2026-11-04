@@ -29,7 +29,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // المسارات المحمية
 Route::middleware(['auth'])->group(function () {
     // لوحة التحكم
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\Admin\OverviewController::class, 'index'])->name('dashboard');
+    Route::get('/admin/reports', [DashboardController::class, 'index'])->name('admin.reports.index');
     
     // مسارات برنامج الولاء (للمدير فقط)
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {

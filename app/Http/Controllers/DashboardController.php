@@ -36,7 +36,7 @@ class DashboardController extends Controller
         // بيانات الرسوم البيانية
         $chartData = $this->getChartData($filters);
         
-        return view('dashboard', compact(
+        return view('admin.reports', compact(
             'financialStats',
             'customerStats', 
             'productStats',

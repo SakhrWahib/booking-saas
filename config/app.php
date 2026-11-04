@@ -56,7 +56,7 @@ return [
 
     'url' => env('APP_URL', 'https://catshoop.store'),
 
-    'asset_url' => env('ASSET_URL', 'https://catshoop.store'),
+    'asset_url' => env('ASSET_URL'),
 
     /*
     |--------------------------------------------------------------------------
