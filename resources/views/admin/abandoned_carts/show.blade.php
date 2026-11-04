@@ -223,7 +223,7 @@
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-gray-600">عدد الأيام:</span>
-                            <span class="font-medium">{{ $abandonedCart->created_at->diffInDays(now()) }} يوم</span>
+                            <span class="font-medium">{{ (int) abs($abandonedCart->created_at->diffInDays(now())) }} يوم</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-gray-600">قيمة المنتج:</span>

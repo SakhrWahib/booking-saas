@@ -1448,7 +1448,7 @@ class FrontendController extends Controller
         
         // التحقق من إمكانية الإلغاء (مثلاً قبل 24 ساعة)
         $bookingTime = Carbon::parse($booking->booking_date . ' ' . $booking->booking_time);
-        if ($bookingTime->diffInHours(now()) < 24) {
+        if (now()->diffInHours($bookingTime, false) < 24) {
             return back()->with('error', 'لا يمكن إلغاء الحجز قبل أقل من 24 ساعة من الموعد');
         }
 

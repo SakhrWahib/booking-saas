@@ -282,7 +282,7 @@ class BookingController extends Controller
 
             // منع الإلغاء قبل أقل من 24 ساعة
             $bookingDateTime = Carbon::parse($booking->booking_date . ' ' . $booking->booking_time);
-            if ($bookingDateTime->diffInHours(now()) < 24) {
+            if (now()->diffInHours($bookingDateTime, false) < 24) {
                 return response()->json([
                     'success' => false,
                     'message' => 'لا يمكن إلغاء الحجز قبل أقل من 24 ساعة من الموعد'

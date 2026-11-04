@@ -613,7 +613,7 @@ class Booking extends Model
         $time = Carbon::parse($this->booking_time);
         
         // حساب الفرق بالأيام
-        $diffInDays = $date->diffInDays(now());
+        $diffInDays = (int) abs($date->diffInDays(now()));
         $dayText = '';
         
         if ($diffInDays == 0) {
