@@ -6,6 +6,8 @@ services:
     volumes:
       - ../..:/workspaces:cached
     command: sleep infinity
+    environment:
+      XDEBUG_MODE: "off"
     depends_on:
       - db
 
