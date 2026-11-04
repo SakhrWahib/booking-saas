@@ -139,3 +139,19 @@ input:focus, select:focus, textarea:focus {
     will-change: transform;
     transform: translateZ(0);
 }
+
+/* ===== نظام التصميم الموحّد للوحة التحكم ===== */
+@layer components {
+    .card { @apply rounded-2xl border border-slate-200 bg-white shadow-sm; }
+    .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition disabled:opacity-50; }
+    .btn-primary { @apply btn bg-brand text-white shadow-sm hover:opacity-90; }
+    .btn-secondary { @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50; }
+    .btn-danger { @apply btn bg-red-600 text-white hover:bg-red-700; }
+    .btn-icon { @apply inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm transition; }
+    .input { @apply w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-color)]; }
+    .label { @apply mb-1 block text-sm font-semibold text-slate-700; }
+    .data-table { @apply min-w-full text-sm; }
+    .data-table thead th { @apply whitespace-nowrap bg-slate-50 px-4 py-3 text-start text-xs font-bold uppercase tracking-wide text-slate-500; }
+    .data-table tbody td { @apply whitespace-nowrap border-t border-slate-100 px-4 py-3; }
+    .data-table tbody tr:hover { @apply bg-slate-50; }
+}

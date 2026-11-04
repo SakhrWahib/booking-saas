@@ -19,7 +19,7 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Booking::with(['customer', 'product', 'serviceProvider', 'coupon']);
+        $query = Booking::with(['customer', 'product', 'serviceProvider', 'coupon', 'invoice']);
 
         // فلترة حسب الحالة
         if ($request->filled('status')) {
@@ -47,7 +47,8 @@ class BookingController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('booking_number', 'like', "%{$search}%")
                   ->orWhereHas('customer', function($customerQuery) use ($search) {
-                      $customerQuery->where('name', 'like', "%{$search}%");
+                      $customerQuery->where('name', 'like', "%{$search}%")
+                          ->orWhere('phone', 'like', "%{$search}%");
                   });
             });
         }
