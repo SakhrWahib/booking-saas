@@ -2,8 +2,6 @@
 # يجهّز المشروع أول مرة داخل GitHub Codespaces
 set -e
 
-sudo apt-get update -qq && sudo apt-get install -y -qq libzip-dev default-mysql-client > /dev/null
-sudo docker-php-ext-install pdo_mysql zip bcmath > /dev/null
 
 composer install --no-interaction --prefer-dist
 
