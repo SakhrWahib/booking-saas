@@ -84,6 +84,9 @@ Route::middleware(['auth'])->group(function () {
     
     // مسارات إدارة مقدمي الخدمة (للمدير ومسؤول المنتجات)
     Route::prefix('admin')->name('admin.')->middleware('permission:service_providers.view')->group(function () {
+        Route::get('/time-offs', [App\Http\Controllers\Admin\TimeOffController::class, 'index'])->name('time-offs.index');
+        Route::post('/time-offs', [App\Http\Controllers\Admin\TimeOffController::class, 'store'])->middleware('permission:service_providers.edit')->name('time-offs.store');
+        Route::delete('/time-offs/{timeOff}', [App\Http\Controllers\Admin\TimeOffController::class, 'destroy'])->middleware('permission:service_providers.edit')->name('time-offs.destroy');
         Route::resource('service-providers', App\Http\Controllers\Admin\ServiceProviderController::class);
         
         // مسارات إضافية لمقدمي الخدمة

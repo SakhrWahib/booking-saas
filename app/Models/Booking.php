@@ -582,26 +582,31 @@ class Booking extends Model
             ];
         }
 
-        // الحصول على الأوقات المحجوزة
-        $bookedSlots = static::where('booking_date', $date)
+        // مقدّم الخدمة في إجازة
+        if ($serviceProvider && $serviceProvider->isOnTimeOff($date)) {
+            return [];
+        }
+
+        // عدد الحجوزات القائمة في كل موعد (المدفوعة تحجز الموعد أيضًا)
+        $bookedCounts = static::whereDate('booking_date', $date)
             ->where('service_provider_id', $serviceProviderId)
-            ->whereIn('status', ['pending', 'confirmed'])
+            ->whereIn('status', ['pending', 'confirmed', 'paid'])
             ->pluck('booking_time')
-            ->map(function($time) {
-                if (strlen($time) > 5) {
-                    return Carbon::parse($time)->format('H:i');
-                }
-                return $time;
-            })
-            ->unique()
-            ->toArray();
+            ->map(fn ($time) => Carbon::parse($time)->format('H:i'))
+            ->countBy()
+            ->all();
 
-        // إرجاع الأوقات المتاحة فقط مع معلومات الفترة
-        $availableSlots = array_filter($allAvailableTimeSlots, function($slot) use ($bookedSlots) {
-            return !in_array($slot['time'], $bookedSlots);
-        });
+        // الموعد متاح ما دام عدد حجوزاته أقل من الطاقة الاستيعابية
+        $capacity = $serviceProvider ? $serviceProvider->slotCapacity() : 1;
+        $availableSlots = [];
+        foreach ($allAvailableTimeSlots as $slot) {
+            $remaining = $capacity - ($bookedCounts[$slot['time']] ?? 0);
+            if ($remaining > 0) {
+                $availableSlots[] = $slot + ['remaining' => $remaining];
+            }
+        }
 
-        return array_values($availableSlots);
+        return $availableSlots;
     }
 
     /**

@@ -48,6 +48,22 @@ class ServiceProvider extends Model
         return $this->belongsTo(WorkingSchedule::class, 'working_schedule_id');
     }
 
+    public function timeOffs()
+    {
+        return $this->hasMany(ProviderTimeOff::class);
+    }
+
+    public function isOnTimeOff($date): bool
+    {
+        return $this->timeOffs()->covering($date)->exists();
+    }
+
+    // عدد الحجوزات المسموح في نفس الموعد: فرد واحد = 1، فريق = السعة
+    public function slotCapacity(): int
+    {
+        return $this->work_type === 'multiple_persons' ? max(1, (int) $this->capacity) : 1;
+    }
+
     /**
      * العلاقة مع المنتجات (محدثة لاستخدام الحقول JSON)
      */

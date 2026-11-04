@@ -24,6 +24,7 @@ return [
         'items' => [
             ['label' => ['ar' => 'الخدمات', 'en' => 'Services'], 'icon' => 'fa-layer-group', 'route' => 'admin.products.index', 'active' => 'admin.products.*', 'permission' => 'products.view'],
             ['label' => ['ar' => 'مقدّمو الخدمة', 'en' => 'Staff'], 'icon' => 'fa-user-tie', 'route' => 'admin.service-providers.index', 'active' => 'admin.service-providers.*', 'permission' => 'service_providers.view'],
+            ['label' => ['ar' => 'الإجازات', 'en' => 'Time off'], 'icon' => 'fa-umbrella-beach', 'route' => 'admin.time-offs.index', 'active' => 'admin.time-offs.*', 'permission' => 'service_providers.view'],
         ],
     ],
     [

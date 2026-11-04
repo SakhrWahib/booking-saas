@@ -637,16 +637,33 @@ class BookingController extends Controller
         $startDate = Carbon::create($year, $month, 1);
         $endDate = $startDate->copy()->endOfMonth();
         
-        $bookings = Booking::with(['customer', 'product', 'serviceProvider'])
+        $providerId = $request->integer('service_provider_id') ?: null;
+
+        $bookings = Booking::with(['customer:id,name', 'product:id,name'])
             ->whereBetween('booking_date', [$startDate, $endDate])
+            ->where('status', '!=', 'cancelled')
+            ->when($providerId, fn ($q) => $q->where('service_provider_id', $providerId))
+            ->orderBy('booking_time')
             ->get()
-            ->groupBy(function($booking) {
-                return $booking->booking_date->format('Y-m-d');
+            ->groupBy(fn ($booking) => Carbon::parse($booking->booking_date)->format('Y-m-d'));
+
+        // أيام الإجازات خلال الشهر (للمقدّم المختار أو للجميع)
+        $timeOffDays = [];
+        \App\Models\ProviderTimeOff::with('serviceProvider:id,name')
+            ->whereDate('start_date', '<=', $endDate)->whereDate('end_date', '>=', $startDate)
+            ->when($providerId, fn ($q) => $q->where('service_provider_id', $providerId))
+            ->get()
+            ->each(function ($off) use (&$timeOffDays, $startDate, $endDate) {
+                $from = $off->start_date->max($startDate);
+                $to = $off->end_date->min($endDate);
+                for ($d = $from->copy(); $d->lte($to); $d->addDay()) {
+                    $timeOffDays[$d->format('Y-m-d')][] = $off->serviceProvider->name ?? '';
+                }
             });
 
-        $serviceProviders = ServiceProvider::orderBy('name')->get();
-        
-        return view('admin.bookings.calendar', compact('bookings', 'month', 'year', 'serviceProviders'));
+        $serviceProviders = ServiceProvider::orderBy('name')->get(['id', 'name']);
+
+        return view('admin.bookings.calendar', compact('bookings', 'month', 'year', 'serviceProviders', 'providerId', 'timeOffDays', 'startDate'));
     }
 
     /**
