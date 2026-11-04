@@ -61,7 +61,7 @@ class FrontendController extends Controller
             ]);
 
             $request->validate([
-                'product_id' => 'required|exists:products,id'
+                'product_id' => 'required|exists:products,id,tenant_id,' . tenant_id()
             ]);
 
             // إزالة المنتج من السلات المتروكة إذا كان موجوداً
@@ -1464,7 +1464,7 @@ class FrontendController extends Controller
     {
         try {
             $request->validate([
-                'product_id' => 'required|exists:products,id'
+                'product_id' => 'required|exists:products,id,tenant_id,' . tenant_id()
             ]);
 
             $product = Product::find($request->product_id);
@@ -1535,7 +1535,7 @@ class FrontendController extends Controller
             \Log::info('addToCart called with data:', $request->all());
             
             $request->validate([
-                'product_id' => 'required|exists:products,id',
+                'product_id' => 'required|exists:products,id,tenant_id,' . tenant_id(),
                 'customer_name' => 'required|string|max:255',
                 'customer_phone' => 'required|string|max:20'
             ]);
@@ -1573,6 +1573,7 @@ class FrontendController extends Controller
                 
                 // إدراج البيانات مباشرة
                 $inserted = \DB::table('abandoned_carts')->insert([
+                    'tenant_id' => tenant_id(),
                     'customer_name' => $request->customer_name,
                     'customer_phone' => $phone,
                     'product_id' => $request->product_id,

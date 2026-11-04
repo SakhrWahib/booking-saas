@@ -9,6 +9,7 @@ use App\Events\NewBookingNotification;
 
 class Booking extends Model
 {
+    use AppModelsConcernsBelongsToTenant;
     use HasFactory;
 
     protected $fillable = [

@@ -22,7 +22,7 @@ class TimeOffController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'service_provider_id' => 'required|exists:service_providers,id',
+            'service_provider_id' => 'required|exists:service_providers,id,tenant_id,' . tenant_id(),
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after_or_equal:start_date',
             'reason' => 'nullable|string|max:150',

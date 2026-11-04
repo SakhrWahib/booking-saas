@@ -100,13 +100,13 @@ class BookingController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 // بيانات العميل
-                'customer_id' => 'nullable|exists:customers,id',
+                'customer_id' => 'nullable|exists:customers,id,tenant_id,' . tenant_id(),
                 'customer.name' => 'required_without:customer_id|string|max:255',
                 'customer.phone' => 'required_without:customer_id|string|max:20',
 
                 // بيانات الحجز
-                'product_id' => 'required|integer|exists:products,id',
-                'service_provider_id' => 'required|integer|exists:service_providers,id',
+                'product_id' => 'required|integer|exists:products,id,tenant_id,' . tenant_id(),
+                'service_provider_id' => 'required|integer|exists:service_providers,id,tenant_id,' . tenant_id(),
                 'date' => 'required|date|after_or_equal:today',
                 'time' => 'required|string',
                 'quantity' => 'nullable|integer|min:1',
@@ -312,7 +312,7 @@ class BookingController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'service_provider_id' => 'required|integer|exists:service_providers,id',
+                'service_provider_id' => 'required|integer|exists:service_providers,id,tenant_id,' . tenant_id(),
                 'date' => 'required|date|after_or_equal:today'
             ]);
 

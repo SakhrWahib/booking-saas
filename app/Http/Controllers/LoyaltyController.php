@@ -294,7 +294,7 @@ class LoyaltyController extends Controller
     public function createCustomerCoupon(Request $request)
     {
         $request->validate([
-            'customer_id' => 'required|exists:customers,id',
+            'customer_id' => 'required|exists:customers,id,tenant_id,' . tenant_id(),
             'discount_type' => 'required|in:percentage,fixed',
             'discount_value' => 'required|numeric|min:0',
             'expiry_days' => 'required|integer|min:1|max:365'

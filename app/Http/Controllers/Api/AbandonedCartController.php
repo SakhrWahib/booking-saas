@@ -99,7 +99,7 @@ class AbandonedCartController extends Controller
             $validator = Validator::make($request->all(), [
                 'customer_name' => 'required|string|max:255',
                 'customer_phone' => 'required|string|max:20',
-                'product_id' => 'required|integer|exists:products,id',
+                'product_id' => 'required|integer|exists:products,id,tenant_id,' . tenant_id(),
                 'notes' => 'nullable|string|max:1000'
             ], [
                 'customer_name.required' => 'اسم العميل مطلوب',
@@ -149,7 +149,7 @@ class AbandonedCartController extends Controller
             $validator = Validator::make($request->all(), [
                 'customer_name' => 'sometimes|required|string|max:255',
                 'customer_phone' => 'sometimes|required|string|max:20',
-                'product_id' => 'sometimes|required|integer|exists:products,id',
+                'product_id' => 'sometimes|required|integer|exists:products,id,tenant_id,' . tenant_id(),
                 'is_contacted' => 'sometimes|boolean',
                 'notes' => 'nullable|string|max:1000'
             ], [

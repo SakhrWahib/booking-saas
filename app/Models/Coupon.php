@@ -8,6 +8,8 @@ use Carbon\Carbon;
 
 class Coupon extends Model
 {
+    use AppModelsConcernsBelongsToTenant;
+
     use HasFactory;
 
     protected $fillable = [

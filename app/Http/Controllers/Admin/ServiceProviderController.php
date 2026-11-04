@@ -63,8 +63,8 @@ class ServiceProviderController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20|unique:service_providers,phone',
-            'email' => 'nullable|email|unique:service_providers,email',
+            'phone' => 'required|string|max:20|unique:service_providers,phone,NULL,id,tenant_id,' . tenant_id(),
+            'email' => 'nullable|email|unique:service_providers,email,NULL,id,tenant_id,' . tenant_id(),
             'capacity' => 'required|integer|min:1|max:50',
             'work_type' => 'required|in:single_person,multiple_persons',
             'coverage_type' => 'required|in:area_based,nearest_booking',
@@ -72,7 +72,7 @@ class ServiceProviderController extends Controller
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'address' => 'nullable|string|max:500',
-            'working_schedule_id' => 'nullable|exists:working_schedules,id',
+            'working_schedule_id' => 'nullable|exists:working_schedules,id,tenant_id,' . tenant_id(),
             'is_active' => 'boolean'
         ]);
 
@@ -133,12 +133,12 @@ class ServiceProviderController extends Controller
                 'required',
                 'string',
                 'max:20',
-                Rule::unique('service_providers')->ignore($serviceProvider->id)
+                Rule::unique('service_providers')->ignore($serviceProvider->id)->where('tenant_id', tenant_id())
             ],
             'email' => [
                 'nullable',
                 'email',
-                Rule::unique('service_providers')->ignore($serviceProvider->id)
+                Rule::unique('service_providers')->ignore($serviceProvider->id)->where('tenant_id', tenant_id())
             ],
             'capacity' => 'required|integer|min:1|max:50',
             'work_type' => 'required|in:single_person,multiple_persons',
@@ -147,7 +147,7 @@ class ServiceProviderController extends Controller
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'address' => 'nullable|string|max:500',
-            'working_schedule_id' => 'nullable|exists:working_schedules,id',
+            'working_schedule_id' => 'nullable|exists:working_schedules,id,tenant_id,' . tenant_id(),
             'is_active' => 'boolean'
         ]);
 

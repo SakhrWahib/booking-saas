@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
 {
+    use AppModelsConcernsBelongsToTenant;
     use HasFactory;
 
     protected $fillable = [

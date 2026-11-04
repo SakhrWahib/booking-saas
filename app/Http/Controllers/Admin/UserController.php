@@ -18,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with('role')->paginate(10);
+        $users = User::where('users.tenant_id', tenant_id())->with('role')->paginate(10);
         return view('admin.users.index', compact('users'));
     }
 
@@ -92,7 +92,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::with('role')->findOrFail($id);
+        $user = User::where('users.tenant_id', tenant_id())->with('role')->findOrFail($id);
         return view('admin.users.show', compact('user'));
     }
 
@@ -101,7 +101,7 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::where('users.tenant_id', tenant_id())->findOrFail($id);
         $roles = Role::all();
         return view('admin.users.edit', compact('user', 'roles'));
     }
@@ -111,7 +111,7 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::where('users.tenant_id', tenant_id())->findOrFail($id);
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -174,10 +174,10 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         try {
-            $user = User::findOrFail($id);
+            $user = User::where('users.tenant_id', tenant_id())->findOrFail($id);
             
             // منع حذف المستخدم إذا كان آخر مدير
-            if ($user->hasRole('admin') && User::whereHas('role', function($query) {
+            if ($user->hasRole('admin') && User::where('users.tenant_id', tenant_id())->whereHas('role', function($query) {
                 $query->where('name', 'admin');
             })->count() <= 1) {
                 return redirect()->back()
@@ -216,7 +216,7 @@ class UserController extends Controller
      */
     public function search(Request $request)
     {
-        $query = User::with('role');
+        $query = User::where('users.tenant_id', tenant_id())->with('role');
 
         if ($request->filled('search')) {
             $search = $request->search;

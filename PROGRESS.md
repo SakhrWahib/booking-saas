@@ -35,3 +35,15 @@
 - `asset_url` افتراضيه null (كان catshoop.store ويكسر CSS).
 - `Product::serviceProviders()` مو علاقة Eloquent. المعرّفات محفوظة كـ JSON في `service_provider_ids`.
 - الاختبارات: 12 اختبار (51 تحقق) كلها نجحت.
+
+## تعدد الأنشطة (المرحلة 3)
+- جدول `tenants`، وعمود `tenant_id` في 13 جدول (migration `2026_11_05_000002`). البيانات القديمة كلها في النشاط رقم 1.
+- `App\Models\Concerns\BelongsToTenant`: نطاق عام (global scope) يفلتر بالنشاط، وكل سجل جديد يأخذ tenant_id تلقائيًا.
+- `User` ما عليه نطاق عام، لأن تسجيل الدخول يقرأ المستخدم قبل ما يتحدد النشاط. استعلامات المستخدمين مقيّدة يدويًا في UserController وUserManagementController.
+- `App\Support\Tenancy` يحدد النشاط الحالي، والدالة `tenant_id()` ترجع رقمه. الميدلوير `IdentifyTenant` يشتغل قبل SubstituteBindings:
+  - لوحة التحكم: نشاط المستخدم المسجّل.
+  - الموقع العام: النطاق (`domain`) أو `slug.TENANCY_CENTRAL_DOMAIN`.
+  - إذا ما انطبق شي: النشاط الأول.
+- قواعد التحقق `unique` و`exists` على جداول النشاط صارت مقيّدة بـ `tenant_id`.
+- الإعدادات (Brand) لها كاش منفصل لكل نشاط.
+- أي `DB::table` جديد على جداول النشاط لازم يضيف `tenant_id` يدويًا.

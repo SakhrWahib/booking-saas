@@ -21,13 +21,13 @@ class UserManagementController extends Controller
     public function index(Request $request)
     {
         // إحصائيات المستخدمين
-        $totalUsers = User::count();
-        $activeUsers = User::where('is_active', true)->count();
-        $newUsers = User::where('created_at', '>=', now()->subWeek())->count();
-        $pendingVerifications = User::where('verification_status', 'pending')->count();
+        $totalUsers = User::where('users.tenant_id', tenant_id())->count();
+        $activeUsers = User::where('users.tenant_id', tenant_id())->where('is_active', true)->count();
+        $newUsers = User::where('users.tenant_id', tenant_id())->where('created_at', '>=', now()->subWeek())->count();
+        $pendingVerifications = User::where('users.tenant_id', tenant_id())->where('verification_status', 'pending')->count();
 
         // بناء الاستعلام الأساسي
-        $query = User::with(['role']);
+        $query = User::where('users.tenant_id', tenant_id())->with(['role']);
 
         // تطبيق الفلاتر
         if ($request->filled('search')) {

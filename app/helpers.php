@@ -51,6 +51,13 @@ if (!function_exists('testImageUrl')) {
 }
 
 // دوال الصلاحيات
+// رقم النشاط الحالي (Multi-tenancy)
+if (!function_exists('tenant_id')) {
+    function tenant_id(): ?int {
+        return \App\Support\Tenancy::id();
+    }
+}
+
 if (!function_exists('hasPermission')) {
     function hasPermission($permissionName) {
         if (!auth()->check()) {

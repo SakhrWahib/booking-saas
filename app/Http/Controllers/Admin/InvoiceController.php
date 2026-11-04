@@ -93,8 +93,8 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'booking_id' => 'nullable|exists:bookings,id',
+            'customer_id' => 'required|exists:customers,id,tenant_id,' . tenant_id(),
+            'booking_id' => 'nullable|exists:bookings,id,tenant_id,' . tenant_id(),
             'issue_date' => 'required|date',
             'due_date' => 'nullable|date|after:issue_date',
             'subtotal' => 'required|numeric|min:0',
@@ -171,8 +171,8 @@ class InvoiceController extends Controller
         }
 
         $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'booking_id' => 'nullable|exists:bookings,id',
+            'customer_id' => 'required|exists:customers,id,tenant_id,' . tenant_id(),
+            'booking_id' => 'nullable|exists:bookings,id,tenant_id,' . tenant_id(),
             'issue_date' => 'required|date',
             'due_date' => 'nullable|date|after:issue_date',
             'subtotal' => 'required|numeric|min:0',

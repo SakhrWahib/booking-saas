@@ -94,7 +94,7 @@ class WorkingScheduleController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'schedule_name' => 'required|string|max:255|unique:working_schedules,schedule_name',
+                'schedule_name' => 'required|string|max:255|unique:working_schedules,schedule_name,NULL,id,tenant_id,' . tenant_id(),
                 'start_date' => 'required|date',
                 'end_date' => 'required|date|after:start_date',
                 'description' => 'nullable|string|max:1000',
@@ -217,7 +217,7 @@ class WorkingScheduleController extends Controller
             $schedule = WorkingSchedule::findOrFail($id);
 
             $validator = Validator::make($request->all(), [
-                'schedule_name' => 'required|string|max:255|unique:working_schedules,schedule_name,' . $schedule->id,
+                'schedule_name' => 'required|string|max:255|unique:working_schedules,schedule_name,' . $schedule->id . ',id,tenant_id,' . tenant_id(),
                 'start_date' => 'required|date',
                 'end_date' => 'required|date|after:start_date',
                 'description' => 'nullable|string|max:1000',

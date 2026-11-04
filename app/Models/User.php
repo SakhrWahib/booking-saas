@@ -9,6 +9,16 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    protected static function booted(): void
+    {
+        static::creating(fn ($user) => $user->tenant_id ??= \App\Support\Tenancy::id());
+    }
+
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [

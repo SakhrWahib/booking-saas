@@ -92,7 +92,7 @@ class AbandonedCartController extends Controller
         $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required|exists:products,id,tenant_id,' . tenant_id(),
             'notes' => 'nullable|string'
         ]);
 
@@ -132,7 +132,7 @@ class AbandonedCartController extends Controller
         $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required|exists:products,id,tenant_id,' . tenant_id(),
             'is_contacted' => 'boolean',
             'notes' => 'nullable|string'
         ]);
@@ -200,7 +200,7 @@ class AbandonedCartController extends Controller
     {
         $request->validate([
             'ids' => 'required|array',
-            'ids.*' => 'exists:abandoned_carts,id'
+            'ids.*' => 'exists:abandoned_carts,id,tenant_id,' . tenant_id()
         ]);
 
         try {
@@ -228,7 +228,7 @@ class AbandonedCartController extends Controller
     {
         $request->validate([
             'ids' => 'required|array',
-            'ids.*' => 'exists:abandoned_carts,id'
+            'ids.*' => 'exists:abandoned_carts,id,tenant_id,' . tenant_id()
         ]);
 
         try {

@@ -92,7 +92,7 @@ class WorkingScheduleController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'schedule_name' => 'required|string|max:255|unique:working_schedules,schedule_name',
+            'schedule_name' => 'required|string|max:255|unique:working_schedules,schedule_name,NULL,id,tenant_id,' . tenant_id(),
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after:start_date',
             'description' => 'nullable|string|max:1000',
@@ -274,7 +274,7 @@ class WorkingScheduleController extends Controller
     public function update(Request $request, WorkingSchedule $workingSchedule)
     {
         $validator = Validator::make($request->all(), [
-            'schedule_name' => 'required|string|max:255|unique:working_schedules,schedule_name,' . $workingSchedule->id,
+            'schedule_name' => 'required|string|max:255|unique:working_schedules,schedule_name,' . $workingSchedule->id . ',id,tenant_id,' . tenant_id(),
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'description' => 'nullable|string|max:1000',
@@ -542,7 +542,7 @@ class WorkingScheduleController extends Controller
             'time_slots.*.period' => 'required|in:morning,afternoon,evening',
             'time_slots.*.label' => 'nullable|string|max:50',
             'time_slots.*.is_active' => 'nullable|boolean',
-            'time_slots.*.id' => 'nullable|exists:time_slots,id'
+            'time_slots.*.id' => 'nullable|exists:time_slots,id,tenant_id,' . tenant_id()
         ]);
 
         try {
@@ -687,7 +687,7 @@ class WorkingScheduleController extends Controller
     {
         $request->validate([
             'time_slots' => 'required|array',
-            'time_slots.*.id' => 'required|exists:time_slots,id',
+            'time_slots.*.id' => 'required|exists:time_slots,id,tenant_id,' . tenant_id(),
             'time_slots.*.sort_order' => 'required|integer|min:0'
         ]);
 

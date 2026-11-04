@@ -8,6 +8,7 @@ use App\Helpers\ImageHelper;
 
 class Product extends Model
 {
+    use AppModelsConcernsBelongsToTenant;
     use HasFactory;
 
     protected $fillable = [

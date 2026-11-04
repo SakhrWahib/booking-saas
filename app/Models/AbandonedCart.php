@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class AbandonedCart extends Model
 {
+    use AppModelsConcernsBelongsToTenant;
+
     use HasFactory;
 
     protected $fillable = [

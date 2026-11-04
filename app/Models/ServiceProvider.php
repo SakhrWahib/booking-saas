@@ -8,6 +8,7 @@ use Carbon\Carbon;
 
 class ServiceProvider extends Model
 {
+    use AppModelsConcernsBelongsToTenant;
     use HasFactory;
 
     protected $fillable = [

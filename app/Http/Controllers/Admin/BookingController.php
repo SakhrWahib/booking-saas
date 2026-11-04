@@ -119,9 +119,9 @@ class BookingController extends Controller
         }
 
         $rules = [
-            'customer_id' => 'required|exists:customers,id',
-            'product_id' => 'required|exists:products,id',
-            'service_provider_id' => 'required|exists:service_providers,id',
+            'customer_id' => 'required|exists:customers,id,tenant_id,' . tenant_id(),
+            'product_id' => 'required|exists:products,id,tenant_id,' . tenant_id(),
+            'service_provider_id' => 'required|exists:service_providers,id,tenant_id,' . tenant_id(),
             'booking_date' => 'required|date|after_or_equal:today',
             'booking_time' => 'required|in:' . implode(',', $availableTimes),
             'quantity' => 'nullable|integer|min:1',
@@ -295,9 +295,9 @@ class BookingController extends Controller
         }
 
         $rules = [
-            'customer_id' => 'required|exists:customers,id',
-            'product_id' => 'required|exists:products,id',
-            'service_provider_id' => 'required|exists:service_providers,id',
+            'customer_id' => 'required|exists:customers,id,tenant_id,' . tenant_id(),
+            'product_id' => 'required|exists:products,id,tenant_id,' . tenant_id(),
+            'service_provider_id' => 'required|exists:service_providers,id,tenant_id,' . tenant_id(),
             'booking_date' => 'required|date',
             'booking_time' => 'required|in:' . implode(',', $availableTimes),
             'quantity' => 'nullable|integer|min:1',
@@ -505,8 +505,8 @@ class BookingController extends Controller
         try {
             $request->validate([
                 'date' => 'required|date|after_or_equal:today',
-                'service_provider_id' => 'required|exists:service_providers,id',
-                'exclude_booking_id' => 'nullable|exists:bookings,id'
+                'service_provider_id' => 'required|exists:service_providers,id,tenant_id,' . tenant_id(),
+                'exclude_booking_id' => 'nullable|exists:bookings,id,tenant_id,' . tenant_id()
             ]);
 
             $date = $request->date;
@@ -695,7 +695,7 @@ class BookingController extends Controller
         $request->validate([
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
-            'service_provider_id' => 'required|exists:service_providers,id'
+            'service_provider_id' => 'required|exists:service_providers,id,tenant_id,' . tenant_id()
         ]);
 
         $isWithinArea = Booking::isWithinServiceArea(
@@ -717,7 +717,7 @@ class BookingController extends Controller
     {
         $request->validate([
             'file' => 'required|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx',
-            'booking_id' => 'required|exists:bookings,id',
+            'booking_id' => 'required|exists:bookings,id,tenant_id,' . tenant_id(),
             'type' => 'required|in:receipt,document,other'
         ]);
 
@@ -751,7 +751,7 @@ class BookingController extends Controller
     {
         try {
             $request->validate([
-                'product_id' => 'required|exists:products,id'
+                'product_id' => 'required|exists:products,id,tenant_id,' . tenant_id()
             ]);
 
             $product = Product::find($request->product_id);

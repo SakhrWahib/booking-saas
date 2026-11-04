@@ -18,7 +18,7 @@ class Brand
     public static function load(): void
     {
         try {
-            $saved = Cache::rememberForever(self::CACHE_KEY, fn () => SystemSetting::where('category', 'brand')
+            $saved = Cache::rememberForever(self::cacheKey(), fn () => SystemSetting::where('category', 'brand')
                 ->pluck('value', 'key')->all());
         } catch (\Throwable $e) {
             return; // قاعدة البيانات غير جاهزة بعد (مثل أثناء التثبيت)
@@ -34,6 +34,11 @@ class Brand
             }
         }
 
+        // اسم النشاط الافتراضي من سجل النشاط نفسه
+        if (empty($saved['name']) && ($tenant = Tenancy::current())) {
+            $brand['name'] = $tenant->name;
+        }
+
         // المسميات الافتراضية حسب نوع النشاط
         $preset = $brand['presets'][$brand['business_type']] ?? $brand['presets']['other'];
         $brand['service_label'] = $brand['service_label'] ?: $preset['service'];
@@ -45,6 +50,11 @@ class Brand
 
     private static ?array $defaults = null;
 
+    private static function cacheKey(): string
+    {
+        return self::CACHE_KEY . '_' . (Tenancy::id() ?? 0);
+    }
+
     public static function save(array $values): void
     {
         foreach ($values as $key => $value) {
@@ -54,6 +64,6 @@ class Brand
             );
         }
 
-        Cache::forget(self::CACHE_KEY);
+        Cache::forget(self::cacheKey());
     }
 }

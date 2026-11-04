@@ -112,7 +112,7 @@ class ProductController extends Controller
                 'add_ons.*.price' => 'required_with:add_ons|numeric|min:0',
                 'add_ons.*.image' => 'nullable|string',
                 'service_provider_ids' => 'nullable|array',
-                'service_provider_ids.*' => 'integer|exists:service_providers,id',
+                'service_provider_ids.*' => 'integer|exists:service_providers,id,tenant_id,' . tenant_id(),
                 'is_active' => 'boolean',
             ], [
                 'name.required' => 'اسم المنتج مطلوب',
@@ -182,7 +182,7 @@ class ProductController extends Controller
                 'add_ons.*.price' => 'required_with:add_ons|numeric|min:0',
                 'add_ons.*.image' => 'nullable|string',
                 'service_provider_ids' => 'nullable|array',
-                'service_provider_ids.*' => 'integer|exists:service_providers,id',
+                'service_provider_ids.*' => 'integer|exists:service_providers,id,tenant_id,' . tenant_id(),
                 'is_active' => 'boolean',
             ], [
                 'name.required' => 'اسم المنتج مطلوب',
@@ -306,7 +306,7 @@ class ProductController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'service_provider_id' => 'required|integer|exists:service_providers,id',
+                'service_provider_id' => 'required|integer|exists:service_providers,id,tenant_id,' . tenant_id(),
             ], [
                 'service_provider_id.required' => 'معرف مقدم الخدمة مطلوب',
                 'service_provider_id.exists' => 'مقدم الخدمة غير موجود',

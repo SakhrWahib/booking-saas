@@ -8,6 +8,7 @@ use Carbon\Carbon;
 
 class TimeSlot extends Model
 {
+    use AppModelsConcernsBelongsToTenant;
     use HasFactory;
 
     protected $fillable = [

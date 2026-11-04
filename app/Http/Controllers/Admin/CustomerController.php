@@ -54,7 +54,7 @@ class CustomerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20|unique:customers,phone',
+            'phone' => 'required|string|max:20|unique:customers,phone,NULL,id,tenant_id,' . tenant_id(),
             'email' => 'nullable|email|max:255',
             'customer_type' => 'required|in:individual',
             'address' => 'nullable|string|max:500',
@@ -117,7 +117,7 @@ class CustomerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20|unique:customers,phone,' . $customer->id,
+            'phone' => 'required|string|max:20|unique:customers,phone,' . $customer->id . ',id,tenant_id,' . tenant_id(),
             'email' => 'nullable|email|max:255',
             'customer_type' => 'required|in:individual',
             'address' => 'nullable|string|max:500',

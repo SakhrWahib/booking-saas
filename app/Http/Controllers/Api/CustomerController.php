@@ -90,7 +90,7 @@ class CustomerController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
-                'phone' => 'required|string|max:20|unique:customers,phone',
+                'phone' => 'required|string|max:20|unique:customers,phone,NULL,id,tenant_id,' . tenant_id(),
                 'email' => 'nullable|email|max:255',
                 'customer_type' => 'nullable|in:individual',
                 'latitude' => 'nullable|numeric|between:-90,90',
@@ -148,7 +148,7 @@ class CustomerController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => 'sometimes|required|string|max:255',
-                'phone' => 'sometimes|required|string|max:20|unique:customers,phone,' . $id,
+                'phone' => 'sometimes|required|string|max:20|unique:customers,phone,' . $id . ',id,tenant_id,' . tenant_id(),
                 'email' => 'nullable|email|max:255',
                 'customer_type' => 'nullable|in:individual',
                 'latitude' => 'nullable|numeric|between:-90,90',
@@ -486,7 +486,7 @@ class CustomerController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
-                'phone' => 'required|string|max:20|unique:customers,phone',
+                'phone' => 'required|string|max:20|unique:customers,phone,NULL,id,tenant_id,' . tenant_id(),
                 'email' => 'nullable|email|max:255',
                 'customer_type' => 'required|in:individual',
                 'latitude' => 'nullable|numeric|between:-90,90',
