@@ -62,6 +62,7 @@
     <style>
         @include('layouts.app-styles')
     </style>
+    <style>:root { --brand-color: {{ config('brand.primary_color') }}; }</style>
 </head>
 <body class="bg-gray-100">
     <!-- Mobile Overlay -->
@@ -233,6 +234,17 @@
                         <span class="font-medium tracking-wide text-sm">{{ __('web.sidebar.home') }}</span>
                     </a>
                 </li>
+
+                @can('system.settings')
+                <li>
+                    <a href="{{ route('admin.settings.edit') }}" class="flex items-center text-gray-100 p-2.5 rounded-lg hover:bg-white/10 transition-all duration-300 group transform hover:-translate-x-1">
+                        <div class="bg-indigo-500/20 p-2 rounded-lg {{ App::getLocale() == 'ar' ? 'ml-2' : 'mr-2' }} group-hover:bg-indigo-500/30 transition-colors duration-300">
+                            <i class="fas fa-sliders-h text-indigo-300 text-base"></i>
+                        </div>
+                        <span class="font-medium tracking-wide text-sm">إعدادات النشاط</span>
+                    </a>
+                </li>
+                @endcan
                 
                 <!-- برنامج الولاء - للمدير فقط -->
                 @auth

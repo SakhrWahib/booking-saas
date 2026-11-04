@@ -28,6 +28,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Blade Directives للصلاحيات
         $this->registerPermissionBladeDirectives();
+
+        // إعدادات النشاط (SaaS) من قاعدة البيانات
+        \App\Support\Brand::load();
     }
 
     private function createStorageLink()

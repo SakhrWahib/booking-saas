@@ -5016,6 +5016,7 @@
             initializeStatisticsVideo();
         });
     </script>
+    <style>:root { --brand-color: {{ config('brand.primary_color') }}; }</style>
 </head>
 <body class="bg-gray-50">
     <!-- Header -->

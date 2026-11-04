@@ -44,6 +44,8 @@ Route::middleware(['auth'])->group(function () {
 
     // مسارات إدارة اللغات (للمدير فقط)
     Route::prefix('admin')->name('admin.')->middleware('permission:system.settings')->group(function () {
+        Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'edit'])->name('settings.edit');
+        Route::put('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
         Route::get('/languages', [App\Http\Controllers\Admin\LanguageController::class, 'index'])->name('languages.index');
         Route::post('/languages', [App\Http\Controllers\Admin\LanguageController::class, 'store'])->name('languages.store');
         Route::get('/languages/{language}', [App\Http\Controllers\Admin\LanguageController::class, 'show'])->name('languages.show');
