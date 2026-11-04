@@ -1,6 +1,6 @@
 # Booking SaaS
 
-نظام حجوزات مبني على Laravel 10، فيه لوحة أدمن وواجهة حجز للعملاء.
+نظام حجوزات مبني على Laravel 13 وPHP 8.3، فيه لوحة أدمن وواجهة حجز للعملاء.
 
 ## التشغيل من المتصفح (GitHub Codespaces)
 1. من صفحة المستودع: **Code ← Codespaces ← Create codespace on main**.
