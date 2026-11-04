@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProviderTimeOff extends Model
 {
-    use AppModelsConcernsBelongsToTenant;
+    use \App\Models\Concerns\BelongsToTenant;
     protected $fillable = ['service_provider_id', 'start_date', 'end_date', 'reason'];
 
     protected $casts = ['start_date' => 'date', 'end_date' => 'date'];

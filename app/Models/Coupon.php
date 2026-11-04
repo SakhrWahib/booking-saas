@@ -8,7 +8,7 @@ use Carbon\Carbon;
 
 class Coupon extends Model
 {
-    use AppModelsConcernsBelongsToTenant;
+    use \App\Models\Concerns\BelongsToTenant;
 
     use HasFactory;
 

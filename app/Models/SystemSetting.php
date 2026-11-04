@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SystemSetting extends Model
 {
-    use AppModelsConcernsBelongsToTenant;
+    use \App\Models\Concerns\BelongsToTenant;
 
     use HasFactory;
 

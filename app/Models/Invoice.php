@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
 {
-    use AppModelsConcernsBelongsToTenant;
+    use \App\Models\Concerns\BelongsToTenant;
     use HasFactory;
 
     protected $fillable = [
