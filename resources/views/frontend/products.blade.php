@@ -82,7 +82,7 @@
     <!-- Enhanced Structured Data - Organization -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
+      "@@context": "https://schema.org",
       "@type": "Organization",
       "name": "{{ config('brand.name') }} الرياض",
       "alternateName": "{{ config('brand.name_en') }} Riyadh",
@@ -143,7 +143,7 @@
     <!-- Enhanced Structured Data - Product List -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
+      "@@context": "https://schema.org",
       "@type": "ItemList",
       "name": "جميع منتجات وخدمات {{ config('brand.name') }} الرياض",
       "description": "قائمة شاملة بجميع خدمات العناية بالحيوانات الأليفة المتاحة في {{ config('brand.name') }} الرياض - غسيل وتجميل القطط والكلاب، قص أظافر، تنظيف أذنين، حلاقة شعر، فحص فطريات",
@@ -207,7 +207,7 @@
     <!-- Enhanced Structured Data - BreadcrumbList -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
+      "@@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
         {
@@ -229,7 +229,7 @@
     <!-- Enhanced Structured Data - LocalBusiness -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
+      "@@context": "https://schema.org",
       "@type": "LocalBusiness",
       "name": "{{ config('brand.name') }} الرياض",
       "image": "{{ asset('images/logo.png') }}",
@@ -278,7 +278,7 @@
     <!-- Enhanced Structured Data - FAQ -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
+      "@@context": "https://schema.org",
       "@type": "FAQPage",
       "mainEntity": [
         {
@@ -336,7 +336,7 @@
     <!-- Enhanced Structured Data - Service -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
+      "@@context": "https://schema.org",
       "@type": "Service",
       "name": "خدمات غسيل وتجميل الحيوانات الأليفة",
       "description": "خدمات شاملة للعناية بالحيوانات الأليفة تشمل غسيل القطط والكلاب، قص الأظافر، تنظيف الأذنين، حلاقة الشعر، فحص الفطريات، تمشيط الشعر، وإضافة البودرة والعطر",
@@ -403,7 +403,7 @@
     <!-- Additional structured data for better SEO -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
+      "@@context": "https://schema.org",
       "@type": "WebSite",
       "name": "{{ config('brand.name') }} الرياض",
       "url": "{{ url('/') }}",
