@@ -24,9 +24,9 @@
             <nav class="flex items-center gap-1 text-sm font-semibold sm:gap-3">
                 <a href="{{ route('products') }}" class="rounded-lg px-3 py-2 hover:bg-slate-100">الخدمات</a>
                 @if(session('customer_id'))
-                    <a href="{{ route('frontend.profile') }}" class="rounded-lg px-3 py-2 hover:bg-slate-100"><i class="fa-regular fa-user ms-1"></i> حسابي</a>
+                    <a href="{{ route('frontend.customer.profile') }}" class="rounded-lg px-3 py-2 hover:bg-slate-100"><i class="fa-regular fa-user ms-1"></i> حسابي</a>
                 @else
-                    <a href="{{ route('frontend.login') }}" class="rounded-lg px-3 py-2 hover:bg-slate-100">دخول</a>
+                    <a href="{{ route('frontend.customer.login') }}" class="rounded-lg px-3 py-2 hover:bg-slate-100">دخول</a>
                 @endif
                 <a href="{{ route('products') }}" class="rounded-lg bg-brand px-4 py-2 text-white hover:opacity-90">احجز الآن</a>
             </nav>
