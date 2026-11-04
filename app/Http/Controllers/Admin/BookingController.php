@@ -243,7 +243,7 @@ class BookingController extends Controller
      */
     public function show(Booking $booking)
     {
-        $booking->load(['customer', 'product', 'serviceProvider', 'coupon']);
+        $booking->load(['customer.bookings:id,customer_id', 'product', 'serviceProvider', 'coupon', 'invoice']);
         return view('admin.bookings.show', compact('booking'));
     }
 

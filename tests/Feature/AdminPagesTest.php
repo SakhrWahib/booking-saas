@@ -40,6 +40,9 @@ class AdminPagesTest extends TestCase
         $this->actingAs($admin)->get('/admin/bookings?status=cancelled')->assertOk()->assertDontSee('T-1001');
         $this->actingAs($admin)->get('/dashboard')->assertOk()->assertSee('عميل الاختبار');
 
+        $this->actingAs($admin)->get("/admin/bookings/{$booking->id}")->assertOk()->assertSee('T-1001')->assertSee('عميل الاختبار')->assertSee('الإجمالي');
+        $this->actingAs($admin)->get('/admin/bookings/create')->assertOk();
+
         $this->actingAs($admin)->post("/admin/bookings/{$booking->id}/confirm")->assertRedirect();
         $this->assertSame('confirmed', $booking->fresh()->status);
     }

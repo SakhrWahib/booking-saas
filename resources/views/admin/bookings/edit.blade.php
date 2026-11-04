@@ -953,7 +953,7 @@ function displayAvailableTimeSlots(availableSlots, isValidDate) {
             const timeValue = timeSlot.time;
             
             if (periods[period]) {
-                periods[period].times.push({ value: timeValue, display: timeFormatted });
+                periods[period].times.push({ value: timeValue, display: timeFormatted + (timeSlot.remaining > 1 ? ` <span class="block text-[10px] opacity-70">${timeSlot.remaining} متاح</span>` : "") });
             }
         } else {
             // fallback للطريقة القديمة (بناءً على الساعة)

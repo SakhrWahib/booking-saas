@@ -2,6 +2,10 @@
 export default {
     darkMode: 'class',
     content: ['./resources/views/**/*.blade.php', './resources/js/**/*.js'],
+    // ألوان تُبنى ديناميكيًا في JavaScript (مثل bg-${period.color}-50 في نموذج الحجز)
+    safelist: [
+        { pattern: /^(bg|text|border)-(yellow|blue|purple|green|red|orange|gray)-(50|100|200|300|500|600|700|800)$/, variants: ['hover'] },
+    ],
     theme: {
         extend: {
             colors: {

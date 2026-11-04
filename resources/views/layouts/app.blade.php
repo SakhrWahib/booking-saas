@@ -100,7 +100,7 @@
             </div>
         </header>
 
-        <main class="min-h-[calc(100vh-4rem)]">
+        <main class="admin-main min-h-[calc(100vh-4rem)]">
             @yield('content')
         </main>
     </div>

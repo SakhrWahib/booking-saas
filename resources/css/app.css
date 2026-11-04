@@ -155,3 +155,24 @@ input:focus, select:focus, textarea:focus {
     .data-table tbody td { @apply whitespace-nowrap border-t border-slate-100 px-4 py-3; }
     .data-table tbody tr:hover { @apply bg-slate-50; }
 }
+
+/* ===== توحيد الصفحات القديمة داخل لوحة التحكم =====
+   الأزرق كان اللون الأساسي القديم: نحوّله إلى لون النشاط، ونوحّد شكل الحقول */
+.admin-main .bg-blue-500, .admin-main .bg-blue-600, .admin-main .bg-blue-700,
+.admin-main .hover\:bg-blue-600:hover, .admin-main .hover\:bg-blue-700:hover, .admin-main .hover\:bg-blue-800:hover {
+    background-color: var(--brand-color);
+}
+.admin-main .hover\:bg-blue-700:hover, .admin-main .hover\:bg-blue-800:hover { filter: brightness(0.92); }
+.admin-main .text-blue-600, .admin-main .text-blue-700, .admin-main .hover\:text-blue-800:hover { color: var(--brand-color); }
+.admin-main .border-blue-500, .admin-main .border-blue-600 { border-color: var(--brand-color); }
+.admin-main :is(input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=color]):not([type=range]), select, textarea) {
+    border-radius: 0.75rem;
+    border-color: rgb(203 213 225);
+}
+.admin-main :is(input, select, textarea):focus {
+    outline: none;
+    border-color: transparent;
+    box-shadow: 0 0 0 2px var(--brand-color);
+}
+.admin-main .shadow-md, .admin-main .shadow-lg { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+.admin-main .rounded-lg.shadow, .admin-main .bg-white.rounded-lg { border-radius: 1rem; }
