@@ -2,7 +2,7 @@
 # يجهّز المشروع أول مرة داخل GitHub Codespaces
 set -e
 
-for l in public/storage storage/app/public; do [ -L "$l" ] && rm -f "$l"; done
+for l in public/storage storage/app/public; do if [ -L "$l" ]; then rm -f "$l"; fi; done
 mkdir -p storage/app/public storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
 
 composer install --no-interaction --prefer-dist
