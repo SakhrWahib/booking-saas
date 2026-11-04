@@ -18,47 +18,6 @@ use Illuminate\Support\Facades\Artisan;
 // توجيه الصفحة الرئيسية إلى الفرونت إند
 Route::get('/', [App\Http\Controllers\frontend\FrontendController::class, 'index'])->name('home');
 
-// Route for CSS file - حل لمشكلة CSS على السيرفر
-Route::get('/css/frontend-styles.css', function () {
-    $cssPath = resource_path('css/frontend-styles.css');
-    if (file_exists($cssPath)) {
-        return response()->file($cssPath, ['Content-Type' => 'text/css']);
-    } else {
-        // Fallback to public folder
-
-// Route for Images - حل لمشكلة الصور على السيرفر
-Route::get('/images/{filename}', function ($filename) {
-    $imagePath = public_path('images/' . $filename);
-    if (file_exists($imagePath)) {
-        $extension = pathinfo($filename, PATHINFO_EXTENSION);
-        $mimeTypes = [
-            'png' => 'image/png',
-            'jpg' => 'image/jpeg',
-            'jpeg' => 'image/jpeg',
-            'gif' => 'image/gif',
-            'svg' => 'image/svg+xml',
-            'ico' => 'image/x-icon',
-            'webp' => 'image/webp'
-        ];
-        
-        $mimeType = $mimeTypes[$extension] ?? 'application/octet-stream';
-        
-        return response()->file($imagePath, [
-            'Content-Type' => $mimeType,
-            'Cache-Control' => 'public, max-age=31536000'
-        ]);
-    } else {
-        abort(404);
-    }
-})->where('filename', '.*');
-        $publicPath = public_path('css/frontend-styles.css');
-        if (file_exists($publicPath)) {
-            return response()->file($publicPath, ['Content-Type' => 'text/css']);
-        }
-        return response('/* CSS file not found */', 404, ['Content-Type' => 'text/css']);
-    }
-});
-
 // مسارات المصادقة للإدارة
 Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [LoginController::class, 'login'])->name('admin.login.submit');
