@@ -309,7 +309,7 @@
                         @if($coupon->start_date && $coupon->end_date)
                         <div>
                             <h4 class="text-sm font-medium text-gray-500 mb-1">مدة الصلاحية</h4>
-                            <p class="text-sm text-gray-900">{{ $coupon->start_date->diffInDays($coupon->end_date) }} يوم</p>
+                            <p class="text-sm text-gray-900">{{ (int) abs($coupon->start_date->diffInDays($coupon->end_date)) }} يوم</p>
                         </div>
                         @endif
 

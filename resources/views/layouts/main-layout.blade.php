@@ -3897,7 +3897,7 @@
     <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
+        "@@context": "https://schema.org",
         "@type": "LocalBusiness",
         "name": "{{ config('brand.name') }}",
         "alternateName": "{{ config('brand.name_en') }}",
@@ -4005,7 +4005,7 @@
     <!-- Organization Schema -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
+        "@@context": "https://schema.org",
         "@type": "Organization",
         "name": "{{ config('brand.name') }}",
         "url": "{{ url()->current() }}",
@@ -4022,7 +4022,7 @@
     <!-- Breadcrumb Schema -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
+        "@@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
             {

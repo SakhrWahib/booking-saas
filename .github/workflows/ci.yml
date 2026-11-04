@@ -31,7 +31,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - run: composer install --no-interaction --prefer-dist
+      - name: Composer install (update on upgrade-* branches)
+        run: |
+          if [[ "$GITHUB_REF_NAME" == upgrade-* ]]; then
+            composer update -W --no-interaction --prefer-dist
+          else
+            composer install --no-interaction --prefer-dist
+          fi
+      - if: startsWith(github.ref_name, 'upgrade-')
+        uses: actions/upload-artifact@v4
+        with:
+          name: composer-lock
+          path: composer.lock
+      - run: php artisan --version
       - run: cp .env.example .env && php artisan key:generate
       - name: Compile Blade views
         run: php artisan view:cache

@@ -178,7 +178,7 @@ class Customer extends Model
         if (!$this->last_mobile_login) {
             return null;
         }
-        return now()->diffInDays($this->last_mobile_login);
+        return (int) abs(now()->diffInDays($this->last_mobile_login));
     }
 
     /**

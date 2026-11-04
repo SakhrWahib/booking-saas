@@ -142,7 +142,7 @@
                                 <div class="bg-blue-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2">
                                     <i class="fas fa-calendar-check text-blue-600"></i>
                                 </div>
-                                <div class="text-2xl font-bold text-blue-600">{{ $user->created_at->diffInDays(now()) }}</div>
+                                <div class="text-2xl font-bold text-blue-600">{{ (int) abs($user->created_at->diffInDays(now())) }}</div>
                                 <div class="text-xs text-blue-600">أيام العضوية</div>
                             </div>
                             
@@ -150,7 +150,7 @@
                                 <div class="bg-green-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2">
                                     <i class="fas fa-clock text-green-600"></i>
                                 </div>
-                                <div class="text-2xl font-bold text-green-600">{{ $user->updated_at->diffInHours(now()) }}</div>
+                                <div class="text-2xl font-bold text-green-600">{{ (int) abs($user->updated_at->diffInHours(now())) }}</div>
                                 <div class="text-xs text-green-600">ساعات منذ آخر تحديث</div>
                             </div>
                             
