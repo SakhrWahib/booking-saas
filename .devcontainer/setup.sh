@@ -2,6 +2,8 @@
 # يجهّز المشروع أول مرة داخل GitHub Codespaces
 set -e
 
+for l in public/storage storage/app/public; do [ -L "$l" ] && rm -f "$l"; done
+mkdir -p storage/app/public storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
 
 composer install --no-interaction --prefer-dist
 
@@ -11,7 +13,6 @@ if [ ! -f .env ]; then
   php artisan key:generate
 fi
 
-mkdir -p storage/app/public storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
 
 echo "انتظار قاعدة البيانات..."
 until mysqladmin ping -h db -u booking -pbooking --silent; do sleep 2; done

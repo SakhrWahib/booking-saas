@@ -21,70 +21,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // إنشاء الرابط الرمزي تلقائياً
-        if (!file_exists(public_path('storage'))) {
-            $this->createStorageLink();
-        }
+        // الرابط الرمزي للتخزين يُنشأ بأمر php artisan storage:link عند التثبيت
 
         // Blade Directives للصلاحيات
         $this->registerPermissionBladeDirectives();
 
         // إعدادات النشاط (SaaS) من قاعدة البيانات
         \App\Support\Brand::load();
-    }
-
-    private function createStorageLink()
-    {
-        try {
-            $target = storage_path('app/public');
-            $link = public_path('storage');
-            
-            // التحقق من وجود دالة symlink قبل استخدامها
-            if (function_exists('symlink')) {
-                if (!file_exists($link)) {
-                    symlink($target, $link);
-                }
-            } else {
-                // حل بديل: إنشاء مجلد storage يدوياً إذا لم تكن symlink متاحة
-                \Log::warning('symlink function is not available on this server, using manual directory creation');
-                
-                if (!file_exists($link)) {
-                    if (!file_exists($target)) {
-                        mkdir($target, 0755, true);
-                    }
-                    
-                    // نسخ محتويات storage/app/public إلى public/storage
-                    if (is_dir($target)) {
-                        $this->copyDirectory($target, $link);
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            // تجاهل الأخطاء إذا كان الرابط موجود بالفعل
-            \Log::warning('Failed to create storage link: ' . $e->getMessage());
-        }
-    }
-    
-    private function copyDirectory($source, $destination)
-    {
-        if (!is_dir($destination)) {
-            mkdir($destination, 0755, true);
-        }
-        
-        $dir = opendir($source);
-        while (($file = readdir($dir)) !== false) {
-            if ($file != '.' && $file != '..') {
-                $sourcePath = $source . '/' . $file;
-                $destPath = $destination . '/' . $file;
-                
-                if (is_dir($sourcePath)) {
-                    $this->copyDirectory($sourcePath, $destPath);
-                } else {
-                    copy($sourcePath, $destPath);
-                }
-            }
-        }
-        closedir($dir);
     }
 
     private function registerPermissionBladeDirectives()
