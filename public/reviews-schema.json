@@ -1,0 +1,84 @@
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "كات شوب الرياض",
+  "image": "https://catshoopgrooming.com/logo.php",
+  "description": "أفضل خدمات العناية بالحيوانات الأليفة في الرياض - غسيل وتجميل القطط والكلاب",
+  "url": "https://catshoopgrooming.com",
+  "telephone": "+9665XXXXXXXX",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "الرياض",
+    "addressRegion": "الرياض",
+    "addressCountry": "SA"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 24.7136,
+    "longitude": 46.6753
+  },
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday", 
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "opens": "08:00",
+    "closes": "22:00"
+  },
+  "priceRange": "$$",
+  "currenciesAccepted": "SAR",
+  "paymentAccepted": "Cash, Credit Card",
+  "areaServed": {
+    "@type": "City",
+    "name": "الرياض"
+  },
+  "serviceType": "Pet Grooming Services",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "200"
+  },
+  "review": [
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "نورة العتيبي"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "الخدمة ممتازة جدًا! وصلوا في الوقت المحدد وتعاملهم راقٍ مع أليفي، أنصح أي أحد يجربهم بدون تردد."
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "سارة الشهراني"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "طلبت خدمة غسيل للقطتي، كانوا حريصين واحترافيين جدًا. حبيت التنظيم والدقة."
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "ريم القحطاني"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5"
+      },
+      "reviewBody": "أول مرة أجربهم، بس أكيد مو الأخيرة! أليفتي صارت مرتاحة ومبسوطة بعد الخدمة"
+    }
+  ]
+}

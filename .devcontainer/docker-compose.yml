@@ -1,0 +1,22 @@
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/php:1-8.2-bookworm
+    volumes:
+      - ../..:/workspaces:cached
+    command: sleep infinity
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: booking
+      MYSQL_USER: booking
+      MYSQL_PASSWORD: booking
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:

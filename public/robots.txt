@@ -1,0 +1,97 @@
+User-agent: *
+Allow: /
+
+# Allow all search engines to crawl the site
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Disallow admin and system files
+Disallow: /admin/
+Disallow: /app/
+Disallow: /bootstrap/
+Disallow: /config/
+Disallow: /database/
+Disallow: /resources/
+Disallow: /storage/
+Disallow: /tests/
+Disallow: /vendor/
+Disallow: /artisan
+Disallow: /composer.json
+Disallow: /composer.lock
+Disallow: /package.json
+Disallow: /vite.config.js
+Disallow: /phpunit.xml
+Disallow: /README.md
+Disallow: /DEPLOYMENT_GUIDE.md
+
+# Disallow problematic URLs that cause 404 errors
+Disallow: /booking/
+Disallow: /customer/
+Disallow: /products/cat-grooming
+Disallow: /products/dog-grooming
+Disallow: /products/cat-washing
+Disallow: /products/dog-washing
+Disallow: /products/nail-trimming
+Disallow: /products/ear-cleaning
+Disallow: /products/eye-cleaning
+Disallow: /products/hair-cutting
+Disallow: /products/fungus-check
+Disallow: /products/hair-brushing
+Disallow: /products/powder-perfume
+Disallow: /products/dry-care
+Disallow: /products/water-shower
+Disallow: /products/service-packages
+Disallow: /products/prices
+Disallow: /products/offers
+Disallow: /services/
+Disallow: /services/cat-washing
+Disallow: /services/dog-washing
+Disallow: /services/cat-grooming
+Disallow: /services/dog-grooming
+Disallow: /services/nail-trimming
+Disallow: /services/ear-cleaning
+Disallow: /services/eye-cleaning
+Disallow: /services/hair-cutting
+Disallow: /services/fungus-check
+Disallow: /services/hair-brushing
+Disallow: /services/powder-perfume
+Disallow: /services/dry-care
+Disallow: /services/water-shower
+Disallow: /services/dry-shampoo
+Disallow: /services/uv-fungus-check
+Disallow: /services/zero-clipper
+Disallow: /services/small-dog-washing
+Disallow: /services/large-dog-washing
+Disallow: /services/packages
+Disallow: /services/prices
+Disallow: /services/offers
+Disallow: /services/emergency
+Disallow: /services/consultation
+
+# Allow important pages
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Allow: /favicon.ico
+Allow: /manifest.json
+Allow: /sitemap.xml
+Allow: /sitemap-products.xml
+Allow: /sitemap-services.xml
+Allow: /sitemap-index.xml
+
+# Sitemap location
+Sitemap: https://catshoopgrooming.com/sitemap.xml
+Sitemap: https://catshoopgrooming.com/sitemap-products.xml
+Sitemap: https://catshoopgrooming.com/sitemap-services.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1

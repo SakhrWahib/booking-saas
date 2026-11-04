@@ -1,0 +1,5 @@
+Contact: mailto:catshoop@outlook.sa
+Expires: 2026-07-31T23:59:59.000Z
+Preferred-Languages: ar, en
+Canonical: https://catshoop.store/.well-known/security.txt
+Policy: https://catshoop.store/security-policy 

@@ -1,0 +1,129 @@
+{
+    "name": "كات شوب الرياض - خدمات غسيل وتجميل القطط والكلاب",
+    "short_name": "كات شوب الرياض",
+    "description": "أفضل خدمات العناية بالحيوانات الأليفة في الرياض - غسيل وتجميل القطط والكلاب، خدمة منزلية مريحة",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ec4899",
+    "orientation": "portrait-primary",
+    "lang": "ar",
+    "dir": "rtl",
+    "categories": ["lifestyle", "pets", "health", "beauty"],
+    "icons": [
+        {
+            "src": "/images/logo-72x72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-128x128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-152x152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "احجز موعد",
+            "short_name": "حجز",
+            "description": "احجز موعد لغسيل أو تجميل حيوانك الأليف",
+            "url": "/booking",
+            "icons": [
+                {
+                    "src": "/images/booking-icon-96x96.png",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "المنتجات والخدمات",
+            "short_name": "الخدمات",
+            "description": "تصفح جميع المنتجات والخدمات المتاحة",
+            "url": "/products",
+            "icons": [
+                {
+                    "src": "/images/services-icon-96x96.png",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "اتصل بنا",
+            "short_name": "اتصال",
+            "description": "اتصل بنا للحصول على المساعدة",
+            "url": "tel:+9665XXXXXXXX",
+            "icons": [
+                {
+                    "src": "/images/phone-icon-96x96.png",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/images/screenshot-1.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "الصفحة الرئيسية - كات شوب الرياض"
+        },
+        {
+            "src": "/images/screenshot-2.png",
+            "sizes": "750x1334",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "صفحة المنتجات - خدمات غسيل القطط والكلاب"
+        }
+    ],
+    "related_applications": [
+        {
+            "platform": "webapp",
+            "url": "https://catshoopgrooming.com"
+        }
+    ],
+    "prefer_related_applications": false,
+    "scope": "/",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ec4899"
+} 

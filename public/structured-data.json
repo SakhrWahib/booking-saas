@@ -1,0 +1,69 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "كات شوب الرياض",
+  "alternateName": "Cat Shop Riyadh",
+  "url": "https://catshoopgrooming.com",
+  "logo": "https://catshoopgrooming.com/logo.php",
+  "description": "أفضل خدمات العناية بالحيوانات الأليفة في الرياض. غسيل، تجميل، قص أظافر، تنظيف أذنين للقطط والكلاب. خدمة منزلية مضمونة.",
+  "foundingDate": "2024",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "الرياض",
+    "addressRegion": "الرياض",
+    "addressCountry": "SA",
+    "postalCode": "12345"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+9665XXXXXXXX",
+    "contactType": "customer service",
+    "availableLanguage": "Arabic",
+    "areaServed": "SA",
+    "serviceArea": {
+      "@type": "City",
+      "name": "الرياض"
+    }
+  },
+  "sameAs": [
+    "https://catshoop1.com/"
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "خدمات العناية بالحيوانات الأليفة",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "غسيل القطط",
+          "description": "خدمة غسيل وتجميل القطط مع شامبو بدون ماء",
+          "category": "خدمات العناية بالقطط"
+        },
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 7,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/FreeReturn"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "غسيل الكلاب",
+          "description": "خدمة غسيل وتجميل الكلاب مع شامبو بدون ماء",
+          "category": "خدمات العناية بالكلاب"
+        },
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 7,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/FreeReturn"
+        }
+      }
+    ]
+  }
+}

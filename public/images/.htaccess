@@ -1,0 +1,23 @@
+# Allow access to image files
+<FilesMatch "\.(png|jpg|jpeg|gif|svg|ico|webp)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Set correct MIME types
+<IfModule mod_mime.c>
+    AddType image/png .png
+    AddType image/jpeg .jpg .jpeg
+    AddType image/gif .gif
+    AddType image/svg+xml .svg
+    AddType image/x-icon .ico
+    AddType image/webp .webp
+</IfModule>
+
+# Enable CORS for images
+<IfModule mod_headers.c>
+    <FilesMatch "\.(png|jpg|jpeg|gif|svg|ico|webp)$">
+        Header set Access-Control-Allow-Origin "*"
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+</IfModule> 

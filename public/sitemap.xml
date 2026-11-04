@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    
+               <!-- الصفحة الرئيسية -->
+           <url>
+               <loc>https://catshoopgrooming.com/</loc>
+               <lastmod>2025-07-09</lastmod>
+               <changefreq>daily</changefreq>
+               <priority>1.0</priority>
+               <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/"/>
+               <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/"/>
+           </url>
+           
+           <!-- صفحة المنتجات -->
+           <url>
+               <loc>https://catshoopgrooming.com/products</loc>
+               <lastmod>2025-07-09</lastmod>
+               <changefreq>daily</changefreq>
+               <priority>0.9</priority>
+               <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/products"/>
+               <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/products"/>
+           </url>
+    
+    <!-- صفحة الحجز -->
+    <url>
+        <loc>https://catshoopgrooming.com/frontend/booking/start</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/frontend/booking/start"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/frontend/booking/start"/>
+    </url>
+    
+    <!-- صفحة العملاء -->
+    <url>
+        <loc>https://catshoopgrooming.com/frontend/customer/login</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/frontend/customer/login"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/frontend/customer/login"/>
+    </url>
+    
+    <!-- صفحة تسجيل الدخول -->
+    <url>
+        <loc>https://catshoopgrooming.com/frontend/customer/login</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+        <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/frontend/customer/login"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/frontend/customer/login"/>
+    </url>
+    
+    <!-- صفحة الملف الشخصي -->
+    <url>
+        <loc>https://catshoopgrooming.com/frontend/customer/profile</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+        <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/frontend/customer/profile"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/frontend/customer/profile"/>
+    </url>
+    
+    <!-- صفحات الحجز -->
+    <url>
+        <loc>https://catshoopgrooming.com/frontend/booking/select-location</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/frontend/booking/select-location"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/frontend/booking/select-location"/>
+    </url>
+    
+    <url>
+        <loc>https://catshoopgrooming.com/frontend/booking/select-datetime</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/frontend/booking/select-datetime"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/frontend/booking/select-datetime"/>
+    </url>
+    
+    <url>
+        <loc>https://catshoopgrooming.com/frontend/booking/select-addons</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/frontend/booking/select-addons"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/frontend/booking/select-addons"/>
+    </url>
+    
+    <url>
+        <loc>https://catshoopgrooming.com/frontend/booking/customer-info</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/frontend/booking/customer-info"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/frontend/booking/customer-info"/>
+    </url>
+    
+    <url>
+        <loc>https://catshoopgrooming.com/frontend/booking/payment-details</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/frontend/booking/payment-details"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/frontend/booking/payment-details"/>
+    </url>
+    
+    <url>
+        <loc>https://catshoopgrooming.com/frontend/booking/bank-transfer</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/frontend/booking/bank-transfer"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/frontend/booking/bank-transfer"/>
+    </url>
+    
+    <url>
+        <loc>https://catshoopgrooming.com/frontend/booking/success</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+        <xhtml:link rel="alternate" hreflang="ar" href="https://catshoopgrooming.com/frontend/booking/success"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://catshoopgrooming.com/frontend/booking/success"/>
+    </url>
+    
+    <!-- صفحات مهمة للسيو -->
+    <url>
+        <loc>https://catshoopgrooming.com/robots.txt</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    
+    <url>
+        <loc>https://catshoopgrooming.com/sitemap-products.xml</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.4</priority>
+    </url>
+    
+    <url>
+        <loc>https://catshoopgrooming.com/sitemap-services.xml</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.4</priority>
+    </url>
+    
+    <url>
+        <loc>https://catshoopgrooming.com/feed.xml</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.3</priority>
+    </url>
+    
+    <url>
+        <loc>https://catshoopgrooming.com/sitemap-index.xml</loc>
+        <lastmod>2025-01-08</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.4</priority>
+    </url>
+    
+</urlset> 

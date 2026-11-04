@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>كات شوب - خدمات غسيل وتجميل القطط والكلاب في الرياض</title>
+        <link>https://catshoopgrooming.com</link>
+        <description>أفضل خدمات العناية بالحيوانات الأليفة في الرياض - غسيل قطط، غسيل كلاب، قص أظافر، تنظيف أذنين، حلاقة شعر</description>
+        <language>ar</language>
+        <lastBuildDate>2025-07-09T00:00:00+00:00</lastBuildDate>
+        <atom:link href="https://catshoopgrooming.com/feed.xml" rel="self" type="application/rss+xml"/>
+        
+        <item>
+            <title>كات شوب - خدمات غسيل وتجميل القطط والكلاب في الرياض</title>
+            <link>https://catshoopgrooming.com</link>
+            <description>أفضل خدمات العناية بالحيوانات الأليفة في الرياض - غسيل قطط، غسيل كلاب، قص أظافر، تنظيف أذنين، حلاقة شعر. خدمة منزلية مضمونة</description>
+            <pubDate>2025-07-09T00:00:00+00:00</pubDate>
+            <guid>https://catshoopgrooming.com</guid>
+        </item>
+        
+        <item>
+            <title>خدمات غسيل القطط في الرياض</title>
+            <link>https://catshoopgrooming.com/products</link>
+            <description>خدمات غسيل وتجميل القطط مع شامبو بدون ماء - خدمة منزلية مريحة في الرياض</description>
+            <pubDate>2025-07-09T00:00:00+00:00</pubDate>
+            <guid>https://catshoopgrooming.com/products</guid>
+        </item>
+        
+        <item>
+            <title>خدمات غسيل الكلاب في الرياض</title>
+            <link>https://catshoopgrooming.com/products</link>
+            <description>خدمات غسيل وتجميل الكلاب مع شامبو بدون ماء - خدمة منزلية مريحة في الرياض</description>
+            <pubDate>2025-07-09T00:00:00+00:00</pubDate>
+            <guid>https://catshoopgrooming.com/products</guid>
+        </item>
+        
+    </channel>
+</rss>

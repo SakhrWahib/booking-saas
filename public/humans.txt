@@ -1,0 +1,15 @@
+/* TEAM */
+Developer: كات شوب
+Contact: +9665XXXXXXXX
+From: الرياض، المملكة العربية السعودية
+
+/* THANKS */
+Laravel Framework
+Tailwind CSS
+Swiper.js
+
+/* SITE */
+Last update: 2025/07/09
+Language: Arabic
+Doctype: HTML5
+IDE: Cursor

@@ -1,0 +1,141 @@
+/* تحسينات الأداء الأساسية */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* تحسين تحميل الخطوط - محسن للسرعة */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap&display=swap&text=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz');
+
+/* تحسين الأداء - إخفاء العناصر غير المرئية */
+.lazy-load {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.lazy-load.loaded {
+    opacity: 1;
+}
+
+/* تحسين الأداء - تحسين الرسوم المتحركة */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* تحسين الأداء - تحسين التمرير */
+html {
+    scroll-behavior: smooth;
+}
+
+/* تحسين الأداء - تحسين العرض */
+* {
+    box-sizing: border-box;
+}
+
+/* تحسين الأداء - تحسين الصور */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* تحسين الأداء - تحسين الجداول */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+/* تحسين الأداء - تحسين النماذج */
+input, select, textarea {
+    font-family: inherit;
+}
+
+/* تحسين الأداء - تحسين الأزرار */
+button {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* تحسين الأداء - تحسين الروابط */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* تحسين الأداء - تحسين القوائم */
+ul, ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* تحسينات الأداء الإضافية */
+/* تحسين الأداء - تحسين العرض */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* تحسين الأداء - تحسين التمرير */
+html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* تحسين الأداء - تحسين الصور */
+img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+/* تحسين الأداء - تحسين النصوص */
+body {
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1;
+    font-kerning: normal;
+}
+
+/* تحسين الأداء - تحسين الأزرار */
+button, input, select, textarea {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* تحسين الأداء - تحسين الجداول */
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+/* تحسين الأداء - تحسين الروابط */
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* تحسين الأداء - تحسين النماذج */
+input:focus, select:focus, textarea:focus {
+    outline: none;
+}
+
+/* تحسين الأداء - تحسين التحميل */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* تحسين الأداء - تحسين التمرير */
+.smooth-scroll {
+    scroll-behavior: smooth;
+}
+
+/* تحسين الأداء - تحسين العرض */
+.optimized-render {
+    will-change: transform;
+    transform: translateZ(0);
+}
