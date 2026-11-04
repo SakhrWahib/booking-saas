@@ -11,7 +11,7 @@ class CouponSeeder extends Seeder
     public function run(): void
     {
         // حذف الكوبونات الموجودة
-        Coupon::truncate();
+        Coupon::query()->delete();
 
         // إضافة كوبونات تجريبية
         $coupons = [
