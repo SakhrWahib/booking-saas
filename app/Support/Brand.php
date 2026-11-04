@@ -24,20 +24,26 @@ class Brand
             return; // قاعدة البيانات غير جاهزة بعد (مثل أثناء التثبيت)
         }
 
+        // نبدأ دائمًا من قيم config/brand.php الأصلية حتى يكون التحميل المتكرر صحيحًا
+        self::$defaults ??= config('brand');
+        $brand = self::$defaults;
+
         foreach ($saved as $key => $value) {
             if ($value !== null && $value !== '') {
-                config(["brand.$key" => $value]);
+                $brand[$key] = $value;
             }
         }
 
         // المسميات الافتراضية حسب نوع النشاط
-        $preset = config('brand.presets.' . config('brand.business_type'), config('brand.presets.other'));
-        config([
-            'brand.service_label' => config('brand.service_label') ?: $preset['service'],
-            'brand.provider_label' => config('brand.provider_label') ?: $preset['provider'],
-            'brand.business_label' => $preset['label'],
-        ]);
+        $preset = $brand['presets'][$brand['business_type']] ?? $brand['presets']['other'];
+        $brand['service_label'] = $brand['service_label'] ?: $preset['service'];
+        $brand['provider_label'] = $brand['provider_label'] ?: $preset['provider'];
+        $brand['business_label'] = $preset['label'];
+
+        config(['brand' => $brand]);
     }
+
+    private static ?array $defaults = null;
 
     public static function save(array $values): void
     {
