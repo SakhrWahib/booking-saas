@@ -1,8 +1,17 @@
 <?php
 
 // قائمة لوحة التحكم: مجموعات وعناصر. كل عنصر يظهر فقط لمن لديه الصلاحية (permission)
-// أو الدور (role). 'active' نمط اسم المسار لتمييز العنصر الحالي.
+// أو الدور (role). 'active' نمط اسم المسار لتمييز العنصر الحالي. 'super' = لمالك المنصة فقط.
+// العناصر المرتبطة بخاصية في الباقة تُخفى تلقائيًا (انظر EnforcePlan::ROUTE_FEATURES).
 return [
+    [
+        'title' => ['ar' => 'المنصة', 'en' => 'Platform'],
+        'items' => [
+            ['label' => ['ar' => 'نظرة عامة', 'en' => 'Overview'], 'icon' => 'fa-crown', 'route' => 'platform.overview', 'active' => 'platform.overview', 'super' => true],
+            ['label' => ['ar' => 'الأنشطة', 'en' => 'Businesses'], 'icon' => 'fa-building', 'route' => 'platform.tenants.index', 'active' => 'platform.tenants.*', 'super' => true],
+            ['label' => ['ar' => 'الباقات', 'en' => 'Plans'], 'icon' => 'fa-box-open', 'route' => 'platform.plans.index', 'active' => 'platform.plans.*', 'super' => true],
+        ],
+    ],
     [
         'title' => ['ar' => 'الرئيسية', 'en' => 'Overview'],
         'items' => [

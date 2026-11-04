@@ -10,6 +10,29 @@
         <h1 class="mb-1 text-2xl font-bold text-gray-900">إعدادات النشاط</h1>
         <p class="mb-6 text-sm text-gray-500">هذه البيانات تظهر للعملاء في الموقع والرسائل. غيّرها في أي وقت.</p>
 
+        @php $tenant = \App\Support\Tenancy::current(); @endphp
+        @if($tenant)
+            <section class="card mb-6 p-5">
+                <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+                    <h2 class="font-semibold text-gray-800">باقتك: {{ $tenant->plan->name ?? 'بدون باقة' }}</h2>
+                    <span class="text-sm text-gray-500">
+                        {{ \App\Models\Tenant::STATUSES[$tenant->subscription_status] ?? '' }}
+                        @php $end = $tenant->subscription_status === 'trial' ? $tenant->trial_ends_at : $tenant->subscription_ends_at; @endphp
+                        @if($end) · حتى {{ $end->format('Y/m/d') }} @endif
+                    </span>
+                </div>
+                <div class="grid gap-3 sm:grid-cols-3">
+                    @foreach(\App\Models\Plan::LIMITS as $limit => [$col, $label])
+                        @php $max = $tenant->plan?->$col; $used = $tenant->usage($limit); @endphp
+                        <div>
+                            <div class="mb-1 flex justify-between text-xs text-gray-600"><span>{{ $label }}</span><span>{{ $used }} / {{ $max ?? '∞' }}</span></div>
+                            <div class="h-2 overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-brand" style="width: {{ $max ? min(100, $used / $max * 100) : 5 }}%"></div></div>
+                        </div>
+                    @endforeach
+                </div>
+            </section>
+        @endif
+
         @if(session('success'))
             <div class="mb-4 rounded-lg bg-green-50 p-3 text-green-700">{{ session('success') }}</div>
         @endif

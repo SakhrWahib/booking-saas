@@ -54,6 +54,10 @@ class FrontendController extends Controller
      */
     public function startBooking(Request $request)
     {
+        if (!plan_allows('monthly_bookings')) {
+            return back()->withInput()->with('error', plan_limit_message('monthly_bookings'));
+        }
+
         try {
             \Log::info('Frontend startBooking: بدء عملية الحجز', [
                 'request_data' => $request->all(),

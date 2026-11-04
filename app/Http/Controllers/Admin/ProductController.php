@@ -34,6 +34,10 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        if (!plan_allows('services')) {
+            return back()->withInput()->with('error', plan_limit_message('services'));
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'short_description' => 'required|string|max:500',

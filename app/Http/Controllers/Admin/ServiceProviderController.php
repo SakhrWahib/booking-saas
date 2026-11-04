@@ -61,6 +61,10 @@ class ServiceProviderController extends Controller
      */
     public function store(Request $request)
     {
+        if (!plan_allows('staff')) {
+            return back()->withInput()->with('error', plan_limit_message('staff'));
+        }
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20|unique:service_providers,phone,NULL,id,tenant_id,' . tenant_id(),

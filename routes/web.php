@@ -295,6 +295,20 @@ Route::prefix('frontend')->name('frontend.')->group(function () {
 });
 
 
+// لوحة مالك المنصة
+Route::middleware(['auth', 'super_admin'])->prefix('platform')->name('platform.')->group(function () {
+    $c = App\Http\Controllers\Platform\PlatformController::class;
+    Route::get('/', [$c, 'overview'])->name('overview');
+    Route::get('/tenants', [$c, 'tenants'])->name('tenants.index');
+    Route::get('/tenants/create', [$c, 'createTenant'])->name('tenants.create');
+    Route::post('/tenants', [$c, 'storeTenant'])->name('tenants.store');
+    Route::get('/tenants/{tenant}/edit', [$c, 'editTenant'])->name('tenants.edit');
+    Route::put('/tenants/{tenant}', [$c, 'updateTenant'])->name('tenants.update');
+    Route::get('/plans', [$c, 'plans'])->name('plans.index');
+    Route::post('/plans', [$c, 'savePlan'])->name('plans.store');
+    Route::put('/plans/{plan}', [$c, 'savePlan'])->name('plans.update');
+});
+
 // راوتات البوت الذكي
 Route::get('/chatbot', [App\Http\Controllers\ChatBotController::class, 'index'])->name('chatbot.index');
 Route::post('/chatbot/process-message', [App\Http\Controllers\ChatBotController::class, 'processMessage'])->name('chatbot.process-message');

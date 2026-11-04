@@ -104,6 +104,10 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
+        if (!plan_allows('monthly_bookings')) {
+            return back()->withInput()->with('error', plan_limit_message('monthly_bookings'));
+        }
+
         // الحصول على الأوقات المتاحة من قاعدة البيانات
         $availableTimes = [];
         if ($request->service_provider_id) {

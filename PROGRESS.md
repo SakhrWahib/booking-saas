@@ -48,3 +48,15 @@
 - الإعدادات (Brand) لها كاش منفصل لكل نشاط.
 - أي `DB::table` جديد على جداول النشاط لازم يضيف `tenant_id` يدويًا.
 - على ويندوز: Git Bash يحذف الشرطة المائلة (\) من الأوامر المضمّنة في heredoc. لكتابة namespaces استخدم Edit، أو `B=$(printf "\x5c")` مع sed.
+
+## المنصة والباقات (المرحلة 4)
+- جداول: `plans`، وفي tenants حقول الاشتراك (plan_id وsubscription_status وtrial_ends_at وsubscription_ends_at وowner_*)، وفي users الحقل `is_super_admin`. الـ migration رقمه `2026_11_05_000003`. النشاط 1 على باقة "الأعمال" ومفعّل.
+- لوحة `/platform` (الميدلوير `super_admin`)، والكنترولر `Platform\PlatformController`:
+  - نظرة عامة: MRR، والاشتراكات اللي تنتهي قريبًا.
+  - الأنشطة: إنشاء نشاط مع مديره وجدول دوام افتراضي وإعداداته بخطوة وحدة.
+  - الباقات.
+- `EnforcePlan` (ضمن مجموعة web):
+  - الاشتراك المنتهي يوقف اللوحة (402، `errors.subscription`)، والبيانات تبقى.
+  - الخصائص تنحجب حسب `ROUTE_FEATURES` (coupons وinvoices وloyalty وreports وabandoned_carts وmobile_app)، والقائمة تخفيها تلقائيًا.
+- الحدود: `plan_allows('services'|'staff'|'monthly_bookings')` داخل store للخدمات والمقدّمين والحجز (اللوحة والموقع).
+- ما فيه دفع إلكتروني للاشتراكات. مالك المنصة يفعّل الاشتراك يدويًا من صفحة النشاط.

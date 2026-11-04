@@ -21,12 +21,15 @@ class AdminSeeder extends Seeder
         );
 
         // إنشاء مستخدم مدير النظام
-        User::create([
+        $owner = User::create([
             'name' => 'مدير النظام',
             'email' => 'admin@example.com',
             'password' => Hash::make('change-me'),
             'role_id' => $adminRole->id,
             'is_active' => true
         ]);
+
+        // مالك المنصة (لوحة /platform)
+        $owner->forceFill(['is_super_admin' => true])->save();
     }
 }

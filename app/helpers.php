@@ -58,6 +58,20 @@ if (!function_exists('tenant_id')) {
     }
 }
 
+// هل تسمح باقة النشاط الحالي بإضافة عنصر؟ (staff | services | monthly_bookings)
+if (!function_exists('plan_allows')) {
+    function plan_allows(string $limit): bool {
+        return \App\Support\Tenancy::current()?->canAdd($limit) ?? true;
+    }
+}
+
+if (!function_exists('plan_limit_message')) {
+    function plan_limit_message(string $limit): string {
+        $label = \App\Models\Plan::LIMITS[$limit][1] ?? $limit;
+        return "وصلت للحد الأقصى من {$label} في باقتك الحالية. تواصل معنا للترقية.";
+    }
+}
+
 if (!function_exists('hasPermission')) {
     function hasPermission($permissionName) {
         if (!auth()->check()) {

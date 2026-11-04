@@ -2,8 +2,13 @@
     $locale = App::getLocale() === 'en' ? 'en' : 'ar';
     $isRtl = $locale === 'ar';
     $user = auth()->user();
-    $canSee = function (array $item) use ($user) {
+    $tenant = \App\Support\Tenancy::current();
+    $canSee = function (array $item) use ($user, $tenant) {
         if (!$user) return false;
+        if (!empty($item['super']) && !$user->is_super_admin) return false;
+        // عنصر مرتبط بخاصية في الباقة
+        $feature = collect(\App\Http\Middleware\EnforcePlan::ROUTE_FEATURES)->first(fn ($f, $prefix) => str_starts_with($item['route'], $prefix));
+        if ($feature && !$tenant?->hasFeature($feature)) return false;
         if (isset($item['role']) && !$user->hasRole($item['role'])) return false;
         if (isset($item['permission']) && !$user->hasPermission($item['permission'])) return false;
         return \Illuminate\Support\Facades\Route::has($item['route']);
