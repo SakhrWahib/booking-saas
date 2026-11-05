@@ -15,7 +15,8 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \App\Http\Middleware\Cors::class,   
+        // CORS لمسارات api/* فقط عبر HandleCors و config/cors.php
+        \App\Http\Middleware\SecurityHeaders::class,
     ];
 
 

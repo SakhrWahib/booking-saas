@@ -44,5 +44,25 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+
+        // تسجيل الدخول: 5 محاولات في الدقيقة لكل بريد وعنوان
+        RateLimiter::for('login', function (Request $request) {
+            return Limit::perMinute(5)->by(strtolower((string) $request->input('email')) . '|' . $request->ip());
+        });
+
+        // رموز التحقق: تمنع التخمين وإرسال الرسائل بكثرة
+        RateLimiter::for('otp', function (Request $request) {
+            $phone = preg_replace('/\D/', '', (string) $request->input('phone', $request->input('customer_phone')));
+
+            return [
+                Limit::perMinute(5)->by('ip:' . $request->ip()),
+                Limit::perHour(20)->by('phone:' . $phone),
+            ];
+        });
+
+        // نماذج الحجز العامة
+        RateLimiter::for('public-forms', function (Request $request) {
+            return Limit::perMinute(30)->by($request->ip());
+        });
     }
 }

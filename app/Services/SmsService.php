@@ -89,7 +89,7 @@ class SmsService
      */
     public static function generateOtp()
     {
-        return rand(1000, 9999);
+        return random_int(1000, 9999);
     }
 
     /**
@@ -105,6 +105,6 @@ class SmsService
             return false;
         }
 
-        return $inputOtp === $storedOtp;
+        return hash_equals((string) $storedOtp, (string) $inputOtp);
     }
 }

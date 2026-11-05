@@ -35,7 +35,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::prefix('coupons')->group(function () {
     // GET للتحقق عبر بارامترات الاستعلام
     Route::get('/validate', [ApiCouponController::class, 'validateCoupon']);
-    Route::post('/validate', [ApiCouponController::class, 'validateCoupon']);
+    Route::post('/validate', [ApiCouponController::class, 'validateCoupon'])->middleware('throttle:public-forms');
 });
 
 /*
@@ -47,31 +47,31 @@ Route::prefix('coupons')->group(function () {
 // Customer CRUD operations
 Route::prefix('customers')->group(function () {
     // Get all customers with search and filtering
-    Route::get('/', [CustomerController::class, 'index']);
+    Route::get('/', [CustomerController::class, 'index'])->middleware('auth:sanctum');
     
     // Get specific customer
-    Route::get('/{id}', [CustomerController::class, 'show']);
+    Route::get('/{id}', [CustomerController::class, 'show'])->middleware('auth:sanctum');
     
     // Create new customer
     Route::post('/', [CustomerController::class, 'store']);
     
     // Update customer
-    Route::put('/{id}', [CustomerController::class, 'update']);
-    Route::patch('/{id}', [CustomerController::class, 'update']);
+    Route::put('/{id}', [CustomerController::class, 'update'])->middleware('auth:sanctum');
+    Route::patch('/{id}', [CustomerController::class, 'update'])->middleware('auth:sanctum');
     
     // Delete customer
-    Route::delete('/{id}', [CustomerController::class, 'destroy']);
+    Route::delete('/{id}', [CustomerController::class, 'destroy'])->middleware('auth:sanctum');
     
     // OTP operations
-    Route::post('/send-otp', [CustomerController::class, 'sendOtp']);
-    Route::post('/verify-otp', [CustomerController::class, 'verifyOtp']);
+    Route::post('/send-otp', [CustomerController::class, 'sendOtp'])->middleware('throttle:otp');
+    Route::post('/verify-otp', [CustomerController::class, 'verifyOtp'])->middleware('throttle:otp');
     
     // Location-based search
-    Route::post('/search-by-location', [CustomerController::class, 'searchByLocation']);
+    Route::post('/search-by-location', [CustomerController::class, 'searchByLocation'])->middleware('auth:sanctum');
     
     // Mobile login tracking
-    Route::post('/record-mobile-login', [CustomerController::class, 'recordMobileLogin']);
-    Route::post('/store-with-mobile-login', [CustomerController::class, 'storeWithMobileLogin']);
+    Route::post('/record-mobile-login', [CustomerController::class, 'recordMobileLogin'])->middleware('throttle:otp');
+    Route::post('/store-with-mobile-login', [CustomerController::class, 'storeWithMobileLogin'])->middleware('throttle:otp');
 });
 
 /*
@@ -89,14 +89,14 @@ Route::prefix('products')->group(function () {
     Route::get('/{id}', [ProductController::class, 'show']);
     
     // Create new product
-    Route::post('/', [ProductController::class, 'store']);
+    Route::post('/', [ProductController::class, 'store'])->middleware('auth:sanctum');
     
     // Update product
-    Route::put('/{id}', [ProductController::class, 'update']);
-    Route::patch('/{id}', [ProductController::class, 'update']);
+    Route::put('/{id}', [ProductController::class, 'update'])->middleware('auth:sanctum');
+    Route::patch('/{id}', [ProductController::class, 'update'])->middleware('auth:sanctum');
     
     // Delete product
-    Route::delete('/{id}', [ProductController::class, 'destroy']);
+    Route::delete('/{id}', [ProductController::class, 'destroy'])->middleware('auth:sanctum');
     
     // Search operations
     Route::post('/search-by-price', [ProductController::class, 'searchByPrice']);
@@ -122,20 +122,20 @@ Route::prefix('working-schedules')->group(function () {
     Route::get('/{id}', [ApiWorkingScheduleController::class, 'show']);
 
     // Create
-    Route::post('/', [ApiWorkingScheduleController::class, 'store']);
+    Route::post('/', [ApiWorkingScheduleController::class, 'store'])->middleware('auth:sanctum');
 
     // Update
-    Route::put('/{id}', [ApiWorkingScheduleController::class, 'update']);
-    Route::patch('/{id}', [ApiWorkingScheduleController::class, 'update']);
+    Route::put('/{id}', [ApiWorkingScheduleController::class, 'update'])->middleware('auth:sanctum');
+    Route::patch('/{id}', [ApiWorkingScheduleController::class, 'update'])->middleware('auth:sanctum');
 
     // Delete
-    Route::delete('/{id}', [ApiWorkingScheduleController::class, 'destroy']);
+    Route::delete('/{id}', [ApiWorkingScheduleController::class, 'destroy'])->middleware('auth:sanctum');
 
     // Toggle active status
     Route::patch('/{id}/toggle-status', [ApiWorkingScheduleController::class, 'toggleStatus']);
 
     // Set default
-    Route::post('/{id}/set-default', [ApiWorkingScheduleController::class, 'setDefault']);
+    Route::post('/{id}/set-default', [ApiWorkingScheduleController::class, 'setDefault'])->middleware('auth:sanctum');
 
     // Active list for a date
     Route::get('/active/list', [ApiWorkingScheduleController::class, 'activeList']);
@@ -189,16 +189,16 @@ Route::prefix('time-slots')->group(function () {
 */
 Route::prefix('bookings')->group(function () {
     // قراءة مع فلاتر
-    Route::get('/', [BookingController::class, 'index']);
+    Route::get('/', [BookingController::class, 'index'])->middleware('auth:sanctum');
 
     // إنشاء حجز
     Route::post('/', [BookingController::class, 'store']);
 
     // تفاصيل
-    Route::get('/{id}', [BookingController::class, 'show']);
+    Route::get('/{id}', [BookingController::class, 'show'])->middleware('auth:sanctum');
 
     // إلغاء
-    Route::patch('/{id}/cancel', [BookingController::class, 'cancel']);
+    Route::patch('/{id}/cancel', [BookingController::class, 'cancel'])->middleware('auth:sanctum');
 
     // الأوقات المتاحة فعلياً
     Route::post('/available-time-slots', [BookingController::class, 'availableTimeSlots']);
@@ -211,28 +211,28 @@ Route::prefix('bookings')->group(function () {
 */
 Route::prefix('abandoned-carts')->group(function () {
     // قائمة السلات المتروكة مع فلاتر
-    Route::get('/', [AbandonedCartController::class, 'index']);
+    Route::get('/', [AbandonedCartController::class, 'index'])->middleware('auth:sanctum');
     
     // إنشاء سلة متروكة جديدة
     Route::post('/', [AbandonedCartController::class, 'store']);
     
     // عرض سلة متروكة محددة
-    Route::get('/{id}', [AbandonedCartController::class, 'show']);
+    Route::get('/{id}', [AbandonedCartController::class, 'show'])->middleware('auth:sanctum');
     
     // تحديث بيانات السلة المتروكة
-    Route::put('/{id}', [AbandonedCartController::class, 'update']);
-    Route::patch('/{id}', [AbandonedCartController::class, 'update']);
+    Route::put('/{id}', [AbandonedCartController::class, 'update'])->middleware('auth:sanctum');
+    Route::patch('/{id}', [AbandonedCartController::class, 'update'])->middleware('auth:sanctum');
     
     // حذف سلة متروكة
-    Route::delete('/{id}', [AbandonedCartController::class, 'destroy']);
+    Route::delete('/{id}', [AbandonedCartController::class, 'destroy'])->middleware('auth:sanctum');
     
     // تحديث حالة التواصل
-    Route::patch('/{id}/mark-contacted', [AbandonedCartController::class, 'markAsContacted']);
+    Route::patch('/{id}/mark-contacted', [AbandonedCartController::class, 'markAsContacted'])->middleware('auth:sanctum');
     
     // إحصائيات السلات المتروكة
-    Route::get('/statistics/overview', [AbandonedCartController::class, 'statistics']);
+    Route::get('/statistics/overview', [AbandonedCartController::class, 'statistics'])->middleware('auth:sanctum');
     
     // السلات التي لم يتم التواصل معها
-    Route::get('/not-contacted/list', [AbandonedCartController::class, 'notContacted']);
+    Route::get('/not-contacted/list', [AbandonedCartController::class, 'notContacted'])->middleware('auth:sanctum');
 });
 

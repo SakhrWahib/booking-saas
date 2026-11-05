@@ -71,7 +71,7 @@ class Customer extends Model
      */
     public function generateOtp($expiryMinutes = 10)
     {
-        $otp = rand(1000, 9999);
+        $otp = random_int(1000, 9999);
         $this->update([
             'otp_code' => $otp,
             'otp_expires_at' => now()->addMinutes($expiryMinutes),

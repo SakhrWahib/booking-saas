@@ -20,9 +20,9 @@ Route::get('/', [App\Http\Controllers\frontend\FrontendController::class, 'index
 
 // مسارات المصادقة للإدارة
 Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/admin/login', [LoginController::class, 'login'])->name('admin.login.submit');
+Route::post('/admin/login', [LoginController::class, 'login'])->middleware('throttle:login')->name('admin.login.submit');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
+Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:login');
 Route::post('/admin/logout', [LoginController::class, 'logout'])->name('admin.logout');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -93,7 +93,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/service-providers/{service_provider}/toggle-status', [App\Http\Controllers\Admin\ServiceProviderController::class, 'toggleStatus'])->name('service-providers.toggle-status');
         Route::get('/service-providers/{service_provider}/working-schedules', [App\Http\Controllers\Admin\ServiceProviderController::class, 'getWorkingSchedules'])->name('service-providers.working-schedules');
         Route::post('/service-providers/{service_provider}/coverage-area', [App\Http\Controllers\Admin\ServiceProviderController::class, 'updateCoverageArea'])->name('service-providers.coverage-area');
-        Route::post('/service-providers/{service_provider}/check-coverage', [App\Http\Controllers\Admin\ServiceProviderController::class, 'checkCoverage'])->name('service-providers.check-coverage');
+        Route::post('/service-providers/{service_provider}/check-coverage', [App\Http\Controllers\Admin\ServiceProviderController::class, 'checkCoverage'])->middleware('throttle:public-forms')->name('service-providers.check-coverage');
         Route::get('/service-providers/{service_provider}/available-slots', [App\Http\Controllers\Admin\ServiceProviderController::class, 'getAvailableTimeSlots'])->name('service-providers.available-slots');
     });
     
@@ -136,7 +136,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bookings/api/product-add-ons', [App\Http\Controllers\Admin\BookingController::class, 'getProductAddOns'])->name('bookings.api.product-add-ons');
     Route::post('/bookings/api/check-coverage', [App\Http\Controllers\Admin\BookingController::class, 'checkCoverageArea'])->name('bookings.api.check-coverage');
     Route::post('/bookings/api/upload-attachment', [App\Http\Controllers\Admin\BookingController::class, 'uploadAttachment'])->name('bookings.api.upload-attachment');
-    Route::post('/bookings/validate-coupon', [App\Http\Controllers\Admin\BookingController::class, 'validateCoupon'])->name('bookings.validate-coupon');
+    Route::post('/bookings/validate-coupon', [App\Http\Controllers\Admin\BookingController::class, 'validateCoupon'])->middleware('throttle:public-forms')->name('bookings.validate-coupon');
         
         // مسارات CRUD للحجوزات
         Route::resource('bookings', App\Http\Controllers\Admin\BookingController::class);
@@ -191,7 +191,7 @@ Route::middleware(['auth'])->group(function () {
         // مسارات إضافية للكوبونات
         Route::post('/coupons/{coupon}/toggle-status', [App\Http\Controllers\Admin\CouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
         Route::get('/coupons/generate-code', [App\Http\Controllers\Admin\CouponController::class, 'generateCode'])->name('coupons.generate-code');
-        Route::post('/coupons/validate', [App\Http\Controllers\Admin\CouponController::class, 'validateCoupon'])->name('coupons.validate');
+        Route::post('/coupons/validate', [App\Http\Controllers\Admin\CouponController::class, 'validateCoupon'])->middleware('throttle:public-forms')->name('coupons.validate');
         Route::get('/coupons/statistics', [App\Http\Controllers\Admin\CouponController::class, 'statistics'])->name('coupons.statistics');
     });
 });
@@ -210,7 +210,7 @@ Route::prefix('frontend')->name('frontend.')->group(function () {
     
     // مسارات الحجز
     Route::prefix('booking')->name('booking.')->group(function () {
-        Route::post('/start', [App\Http\Controllers\frontend\FrontendController::class, 'startBooking'])->name('start');
+        Route::post('/start', [App\Http\Controllers\frontend\FrontendController::class, 'startBooking'])->middleware('throttle:public-forms')->name('start');
         
         // مسارات الإضافات
         Route::get('/select-addons', [App\Http\Controllers\frontend\FrontendController::class, 'selectAddOns'])->name('select-addons');
@@ -218,25 +218,25 @@ Route::prefix('frontend')->name('frontend.')->group(function () {
         Route::get('/api/product-addons', [App\Http\Controllers\frontend\FrontendController::class, 'getProductAddOns'])->name('api.product-addons');
         
         Route::get('/select-location', [App\Http\Controllers\frontend\FrontendController::class, 'selectLocation'])->name('select-location');
-        Route::post('/check-coverage', [App\Http\Controllers\frontend\FrontendController::class, 'checkCoverage'])->name('check-coverage');
+        Route::post('/check-coverage', [App\Http\Controllers\frontend\FrontendController::class, 'checkCoverage'])->middleware('throttle:public-forms')->name('check-coverage');
         
         Route::get('/select-datetime', [App\Http\Controllers\frontend\FrontendController::class, 'selectDateTime'])->name('select-datetime');
         Route::get('/available-slots', [App\Http\Controllers\frontend\FrontendController::class, 'getAvailableSlots'])->name('available-slots');
         Route::post('/save-datetime', [App\Http\Controllers\frontend\FrontendController::class, 'saveDateTime'])->name('save-datetime');
         
         Route::get('/customer-info', [App\Http\Controllers\frontend\FrontendController::class, 'customerInfo'])->name('customer-info');
-        Route::post('/save-customer-info', [App\Http\Controllers\frontend\FrontendController::class, 'saveCustomerInfo'])->name('save-customer-info');
+        Route::post('/save-customer-info', [App\Http\Controllers\frontend\FrontendController::class, 'saveCustomerInfo'])->middleware('throttle:otp')->name('save-customer-info');
         
         // Customer OTP verification for booking
         Route::get('/verify-customer-otp', [App\Http\Controllers\frontend\FrontendController::class, 'verifyCustomerOtp'])->name('verify-customer-otp');
-        Route::post('/confirm-customer-otp', [App\Http\Controllers\frontend\FrontendController::class, 'confirmCustomerOtp'])->name('confirm-customer-otp');
-        Route::post('/resend-customer-otp', [App\Http\Controllers\frontend\FrontendController::class, 'resendCustomerOtp'])->name('resend-customer-otp');
+        Route::post('/confirm-customer-otp', [App\Http\Controllers\frontend\FrontendController::class, 'confirmCustomerOtp'])->middleware('throttle:otp')->name('confirm-customer-otp');
+        Route::post('/resend-customer-otp', [App\Http\Controllers\frontend\FrontendController::class, 'resendCustomerOtp'])->middleware('throttle:otp')->name('resend-customer-otp');
         
         Route::get('/payment-details', [App\Http\Controllers\frontend\FrontendController::class, 'paymentDetails'])->name('payment-details');
-        Route::post('/confirm-later', [App\Http\Controllers\frontend\FrontendController::class, 'confirmBookingLater'])->name('confirm-later');
+        Route::post('/confirm-later', [App\Http\Controllers\frontend\FrontendController::class, 'confirmBookingLater'])->middleware('throttle:public-forms')->name('confirm-later');
         
         Route::get('/bank-transfer', [App\Http\Controllers\frontend\FrontendController::class, 'bankTransfer'])->name('bank-transfer');
-        Route::post('/upload-receipt', [App\Http\Controllers\frontend\FrontendController::class, 'uploadTransferReceipt'])->name('upload-receipt');
+        Route::post('/upload-receipt', [App\Http\Controllers\frontend\FrontendController::class, 'uploadTransferReceipt'])->middleware('throttle:public-forms')->name('upload-receipt');
         
         Route::get('/success/{id}', [App\Http\Controllers\frontend\FrontendController::class, 'bookingSuccess'])->name('success');
         Route::get('/details/{id}', [App\Http\Controllers\frontend\FrontendController::class, 'bookingDetails'])->name('details');
@@ -244,49 +244,20 @@ Route::prefix('frontend')->name('frontend.')->group(function () {
     });
     
         // راوت إضافة السلة المتروكة
-    Route::post('/add-to-cart', [App\Http\Controllers\frontend\FrontendController::class, 'addToCart'])->name('add-to-cart');
+    Route::post('/add-to-cart', [App\Http\Controllers\frontend\FrontendController::class, 'addToCart'])->middleware('throttle:public-forms')->name('add-to-cart');
     
     // Coupon routes
-    Route::post('/validate-coupon', [App\Http\Controllers\frontend\CouponController::class, 'validateCoupon'])->name('validate-coupon');
-    
-    // راوت اختبار للتأكد من عمل النظام
-    Route::get('/test-booking', function() {
-        return response()->json([
-            'success' => true,
-            'message' => 'النظام يعمل بشكل طبيعي',
-            'session' => session()->all()
-        ]);
-    })->name('test-booking');
-    
-    // راوت اختبار للحجز
-    Route::get('/test-start-booking/{product_id}', function($product_id) {
-        try {
-            // حفظ معرف المنتج في الجلسة
-            session(['booking.product_id' => $product_id]);
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'تم حفظ المنتج في الجلسة',
-                'product_id' => $product_id,
-                'session' => session()->all()
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'خطأ: ' . $e->getMessage()
-            ], 500);
-        }
-    })->name('test-start-booking');
+    Route::post('/validate-coupon', [App\Http\Controllers\frontend\CouponController::class, 'validateCoupon'])->middleware('throttle:public-forms')->name('validate-coupon');
     
     // مسارات العميل
     Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/login', [App\Http\Controllers\frontend\CustomerController::class, 'login'])->name('login');
-        Route::post('/login', [App\Http\Controllers\frontend\CustomerController::class, 'doLogin'])->name('do-login');
+        Route::post('/login', [App\Http\Controllers\frontend\CustomerController::class, 'doLogin'])->middleware('throttle:login')->name('do-login');
         
         // OTP verification routes
         Route::get('/verify-otp', [App\Http\Controllers\frontend\CustomerController::class, 'verifyOtp'])->name('verify-otp');
-        Route::post('/confirm-otp', [App\Http\Controllers\frontend\CustomerController::class, 'confirmOtp'])->name('confirm-otp');
-        Route::post('/resend-otp', [App\Http\Controllers\frontend\CustomerController::class, 'resendOtp'])->name('resend-otp');
+        Route::post('/confirm-otp', [App\Http\Controllers\frontend\CustomerController::class, 'confirmOtp'])->middleware('throttle:otp')->name('confirm-otp');
+        Route::post('/resend-otp', [App\Http\Controllers\frontend\CustomerController::class, 'resendOtp'])->middleware('throttle:otp')->name('resend-otp');
         
         Route::get('/profile', [App\Http\Controllers\frontend\CustomerController::class, 'profile'])->name('profile');
         Route::post('/profile/update', [App\Http\Controllers\frontend\CustomerController::class, 'updateProfile'])->name('update-profile');
@@ -294,6 +265,16 @@ Route::prefix('frontend')->name('frontend.')->group(function () {
     });
 });
 
+
+// فحص صحة الخدمة لأدوات المراقبة: 200 إذا التطبيق وقاعدة البيانات يعملان
+Route::get('/up', function () {
+    try {
+        \Illuminate\Support\Facades\DB::select('select 1');
+        return response()->json(['status' => 'ok'], 200);
+    } catch (\Throwable $e) {
+        return response()->json(['status' => 'database_down'], 503);
+    }
+})->name('health');
 
 // لوحة مالك المنصة
 Route::middleware(['auth', 'super_admin'])->prefix('platform')->name('platform.')->group(function () {

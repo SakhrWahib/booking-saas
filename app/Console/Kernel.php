@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // نسخة احتياطية يومية لقاعدة البيانات (تحتاج cron: * * * * * php artisan schedule:run)
+        $schedule->command('backup:database --keep=14')->dailyAt('03:00')->withoutOverlapping()->onOneServer();
     }
 
     /**

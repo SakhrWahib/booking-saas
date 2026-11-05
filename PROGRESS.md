@@ -60,3 +60,16 @@
   - الخصائص تنحجب حسب `ROUTE_FEATURES` (coupons وinvoices وloyalty وreports وabandoned_carts وmobile_app)، والقائمة تخفيها تلقائيًا.
 - الحدود: `plan_allows('services'|'staff'|'monthly_bookings')` داخل store للخدمات والمقدّمين والحجز (اللوحة والموقع).
 - ما فيه دفع إلكتروني للاشتراكات. مالك المنصة يفعّل الاشتراك يدويًا من صفحة النشاط.
+
+## الأمان والأداء والإطلاق (المرحلة 5)
+- API: عمليات الإدارة وبيانات العملاء (26 مسار) تحتاج `auth:sanctum`. القراءة العامة والحجز ورموز OTP بدون توكن، لكن عليها حد للمحاولات.
+- حدود المحاولات في `RouteServiceProvider`:
+  - `login`: 5 في الدقيقة.
+  - `otp`: 5 في الدقيقة لكل IP، و20 في الساعة لكل جوال.
+  - `public-forms`: 30 في الدقيقة.
+- حذفنا مسارات الاختبار `test-booking` (كانت تكشف الجلسة) و`test-start-booking`.
+- رمز OTP صار يتولّد بـ `random_int` ويتقارن بـ `hash_equals`.
+- `SecurityHeaders` صار مكان `Cors` المخصص (كان يرسل `*` لكل الصفحات). CORS للـ api/* فقط عن طريق config/cors.php.
+- أداء: فهارس مركّبة تبدأ بـ tenant_id (migration رقم `2026_11_05_000004`). الـ CI يتأكد إن config وroute وevent cache تشتغل.
+- نسخ احتياطي: الأمر `backup:database --keep=14` يشتغل يوميًا 03:00، والملفات في `storage/app/backups`. الـ CI يجرّبه.
+- فحص الصحة: `/up`. دليل التشغيل في `DEPLOYMENT.md`.
