@@ -12,7 +12,9 @@
     "8000": { "label": "الموقع", "onAutoForward": "openBrowser" }
   },
   "postCreateCommand": "bash .devcontainer/setup.sh",
-  "postStartCommand": "setsid nohup php artisan serve --host=0.0.0.0 --port=8000 > storage/logs/serve.log 2>&1 < /dev/null &",
+  "postAttachCommand": {
+    "server": "php artisan serve --host=0.0.0.0 --port=8000"
+  },
   "customizations": {
     "vscode": {
       "extensions": ["bmewburn.vscode-intelephense-client", "onecentlab.laravel-blade", "bradlc.vscode-tailwindcss"]
