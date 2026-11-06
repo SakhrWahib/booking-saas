@@ -58,7 +58,7 @@ class DemoSeederTest extends TestCase
         $this->get('/dashboard')->assertOk()
             ->assertSee('صالون لمسة')->assertSee('حجوزات اليوم')->assertSee('إيراد الشهر')
             ->assertSee('الخدمات والفريق')->assertSee('الحجوزات القادمة');
-        $this->get('/admin/bookings')->assertOk()->assertSee('DEMO-0012');
+        $this->get('/admin/bookings?search=DEMO-0012')->assertOk()->assertSee('DEMO-0012');
         $this->get('/admin/products')->assertOk()->assertSee('قص وتصفيف شعر');
         $this->get('/admin/customers')->assertOk()->assertSee('نوف القحطاني');
         $this->get('/admin/bookings/calendar')->assertOk();
