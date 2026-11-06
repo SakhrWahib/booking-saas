@@ -26,7 +26,7 @@ class DemoSeederTest extends TestCase
         return Tenant::where('slug', DemoSeeder::SLUG)->firstOrFail();
     }
 
-    private function count(string $model, Tenant $tenant): int
+    private function rows(string $model, Tenant $tenant): int
     {
         return $model::withoutGlobalScope('tenant')->where('tenant_id', $tenant->id)->count();
     }
@@ -36,16 +36,16 @@ class DemoSeederTest extends TestCase
         $mainBookings = Booking::withoutGlobalScope('tenant')->where('tenant_id', 1)->count();
         $tenant = $this->seedDemo();
 
-        $this->assertSame(5, $this->count(Product::class, $tenant));
-        $this->assertSame(3, $this->count(ServiceProvider::class, $tenant));
-        $this->assertSame(12, $this->count(Customer::class, $tenant));
-        $this->assertSame(23, $this->count(Booking::class, $tenant));
+        $this->assertSame(5, $this->rows(Product::class, $tenant));
+        $this->assertSame(3, $this->rows(ServiceProvider::class, $tenant));
+        $this->assertSame(12, $this->rows(Customer::class, $tenant));
+        $this->assertSame(23, $this->rows(Booking::class, $tenant));
         $this->assertSame($mainBookings, Booking::withoutGlobalScope('tenant')->where('tenant_id', 1)->count());
 
         // إعادة التشغيل لا تكرر البيانات
         $tenant = $this->seedDemo();
         $this->assertSame(1, Tenant::where('slug', DemoSeeder::SLUG)->count());
-        $this->assertSame(23, $this->count(Booking::class, $tenant));
+        $this->assertSame(23, $this->rows(Booking::class, $tenant));
     }
 
     public function test_demo_admin_can_login_and_use_dashboard(): void
