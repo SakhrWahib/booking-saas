@@ -11,4 +11,5 @@ return [
 
     // البيانات التجريبية (DemoSeeder) ممنوعة في الإنتاج إلا بهذا الإذن الصريح
     'allow_demo_in_production' => (bool) env('ALLOW_DEMO_SEED_IN_PRODUCTION', false),
+    'demo_admin_password' => env('DEMO_ADMIN_PASSWORD'),
 ];

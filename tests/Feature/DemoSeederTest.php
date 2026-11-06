@@ -20,7 +20,7 @@ class DemoSeederTest extends TestCase
 
     private function seedDemo(): Tenant
     {
-        putenv('DEMO_ADMIN_PASSWORD=demo-test-pass');
+        config(['platform.demo_admin_password' => 'demo-test-pass']);
         $this->seed(DemoSeeder::class);
 
         return Tenant::where('slug', DemoSeeder::SLUG)->firstOrFail();

@@ -49,7 +49,8 @@ class DemoSeeder extends Seeder
         $previous = Tenancy::current();
         Tenancy::set($tenant);
 
-        $password = env('DEMO_ADMIN_PASSWORD') ?: Str::password(12, symbols: false);
+        $fixed = config('platform.demo_admin_password');
+        $password = $fixed ?: Str::password(12, symbols: false);
         User::create([
             'name' => 'مدير الصالون', 'email' => self::ADMIN_EMAIL, 'password' => Hash::make($password),
             'role_id' => Role::where('name', 'admin')->value('id'), 'is_active' => true,
@@ -70,7 +71,7 @@ class DemoSeeder extends Seeder
         Tenancy::set($previous);
 
         $this->command?->info("النشاط التجريبي جاهز: {$tenant->name}");
-        $this->command?->info('الدخول: ' . self::ADMIN_EMAIL . (env('DEMO_ADMIN_PASSWORD') ? ' (كلمة المرور من DEMO_ADMIN_PASSWORD)' : " / {$password}"));
+        $this->command?->info('الدخول: ' . self::ADMIN_EMAIL . ($fixed ? ' (كلمة المرور من DEMO_ADMIN_PASSWORD)' : " / {$password}"));
     }
 
     private function schedule(): WorkingSchedule
