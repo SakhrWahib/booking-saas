@@ -89,9 +89,6 @@ Allow: /sitemap-services.xml
 Allow: /sitemap-index.xml
 
 # Sitemap location
-Sitemap: https://catshoopgrooming.com/sitemap.xml
-Sitemap: https://catshoopgrooming.com/sitemap-products.xml
-Sitemap: https://catshoopgrooming.com/sitemap-services.xml
 
 # Crawl delay (optional)
 Crawl-delay: 1

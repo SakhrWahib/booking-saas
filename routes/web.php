@@ -290,9 +290,11 @@ Route::middleware(['auth', 'super_admin'])->prefix('platform')->name('platform.'
     Route::put('/plans/{plan}', [$c, 'savePlan'])->name('plans.update');
 });
 
-// راوتات البوت الذكي
-Route::get('/chatbot', [App\Http\Controllers\ChatBotController::class, 'index'])->name('chatbot.index');
-Route::post('/chatbot/process-message', [App\Http\Controllers\ChatBotController::class, 'processMessage'])->name('chatbot.process-message');
+// المساعد الآلي: معطّل افتراضيًا (CHATBOT_ENABLED) لأنه مكتوب لنشاط سابق
+if (config('platform.chatbot_enabled')) {
+    Route::get('/chatbot', [App\Http\Controllers\ChatBotController::class, 'index'])->name('chatbot.index');
+    Route::post('/chatbot/process-message', [App\Http\Controllers\ChatBotController::class, 'processMessage'])->middleware('throttle:public-forms')->name('chatbot.process-message');
+}
 
 
 

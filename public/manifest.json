@@ -1,7 +1,7 @@
 {
-  "name": "كات شوب - خدمات غسيل القطط والكلاب في الرياض",
-  "short_name": "كات شوب",
-  "description": "أفضل خدمات غسيل وتجميل القطط والكلاب في الرياض - خدمة منزلية مضمونة",
+  "name": "MawidCloud — موعد كلاود",
+  "short_name": "MawidCloud",
+  "description": "منصة حجوزات المواعيد للأنشطة التجارية",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -23,7 +23,11 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["pets", "grooming", "services"],
+  "categories": [
+    "pets",
+    "grooming",
+    "services"
+  ],
   "screenshots": [
     {
       "src": "/logo.png",

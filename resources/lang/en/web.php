@@ -46,8 +46,8 @@ return [
 
     // Dashboard Translations
     'dashboard' => [
-        'title' => 'Cat Shop Booking System',
-        'welcome' => 'Welcome to Cat Shop Dashboard',
+        'title' => 'MawidCloud Booking',
+        'welcome' => 'Welcome to your dashboard',
         'stats' => [
             'verification_requests' => 'Verification Requests',
             'new_users' => 'New Users',

@@ -2496,11 +2496,11 @@
         }
 
         /* Enhanced Button Styling */
-        header button, header a[href*="catshoop1.com"] {
+        header button, header a[data-store-link] {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        header button:hover, header a[href*="catshoop1.com"]:hover {
+        header button:hover, header a[data-store-link]:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(249, 115, 22, 0.3);
         }
@@ -2619,7 +2619,7 @@
 
         /* Enhanced Button Hover Effects */
         header button:hover,
-        header a[href*="catshoop1.com"]:hover {
+        header a[data-store-link]:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(249, 115, 22, 0.3);
             filter: brightness(1.1);
@@ -5068,10 +5068,10 @@
                 <div class="absolute -top-1 -right-1 w-5 h-5 bg-orange-400 rounded-full flex items-center justify-center text-xs font-bold text-white opacity-0 group-hover:opacity-100 transition-all duration-300">0</div>
             </button>
                     
-                    <a href="https://catshoop1.com/" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-orange-400/30 to-pink-400/30 backdrop-blur-sm px-4 py-2 rounded-xl hover:from-orange-400/50 hover:to-pink-400/50 transition-all duration-300 border border-orange-300/40 hover:border-orange-300/80 shadow-lg" title="متجرنا الإلكتروني - {{ config('brand.name') }}">
+                    @if(config('brand.store_url'))<a href="{{ config('brand.store_url') }}" data-store-link target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-orange-400/30 to-pink-400/30 backdrop-blur-sm px-4 py-2 rounded-xl hover:from-orange-400/50 hover:to-pink-400/50 transition-all duration-300 border border-orange-300/40 hover:border-orange-300/80 shadow-lg" title="متجرنا الإلكتروني - {{ config('brand.name') }}">
                         <i class="fas fa-shopping-bag ml-1"></i>
                         متجرنا الإلكتروني
-                    </a>
+                    </a>@endif
                 </div>
                 
                 <!-- Mobile Menu Button -->
@@ -5114,10 +5114,10 @@
                         <span class="bg-orange-400 text-white text-xs font-bold px-2 py-1 rounded-full">0</span>
                     </button>
                     
-                    <a href="https://catshoop1.com/" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-orange-400/40 to-pink-400/40 text-white hover:from-orange-400/60 hover:to-pink-400/60 transition-all duration-300 py-3 px-4 rounded-xl border border-orange-300/50 hover:border-orange-300/80 shadow-lg flex items-center" title="متجرنا الإلكتروني - {{ config('brand.name') }}">
+                    @if(config('brand.store_url'))<a href="{{ config('brand.store_url') }}" data-store-link target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-orange-400/40 to-pink-400/40 text-white hover:from-orange-400/60 hover:to-pink-400/60 transition-all duration-300 py-3 px-4 rounded-xl border border-orange-300/50 hover:border-orange-300/80 shadow-lg flex items-center" title="متجرنا الإلكتروني - {{ config('brand.name') }}">
                         <i class="fas fa-shopping-bag ml-3"></i>
                         متجرنا الإلكتروني
-                    </a>
+                    </a>@endif
                 </nav>
             </div>
         </div>
@@ -5167,10 +5167,10 @@
                             </a>
                         </li>
                         <li>
-                            <a href="https://catshoop1.com/" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-pink-400 transition-colors text-sm flex items-center gap-2">
+                            @if(config('brand.store_url'))<a href="{{ config('brand.store_url') }}" data-store-link target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-pink-400 transition-colors text-sm flex items-center gap-2">
                                 <i class="fas fa-shopping-bag text-xs"></i>
                                 متجرنا الإلكتروني
-                            </a>
+                            </a>@endif
                         </li>
                     </ul>
                 </div>
@@ -5215,7 +5215,7 @@
                     </a>
                     
                     <!-- Google Play Store -->
-                    <a href="https://play.google.com/store/apps/details?id=com.appsbunches.catshoop" target="_blank" rel="noopener noreferrer" class="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition-colors flex items-center gap-3 group">
+                    @if(config('brand.android_app_url'))<a href="{{ config('brand.android_app_url') }}" data-store-link target="_blank" rel="noopener noreferrer" class="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition-colors flex items-center gap-3 group">
                         <div class="text-2xl">
                             <i class="fab fa-google-play"></i>
                         </div>
@@ -5223,7 +5223,7 @@
                             <div class="text-xs text-gray-400">حمل من</div>
                             <div class="text-sm font-semibold">Google Play</div>
                         </div>
-                    </a>
+                    </a>@endif
                 </div>
             </div>
             
@@ -5315,7 +5315,9 @@
         window.addEventListener('scroll', requestTick);
     </script>
 
+    @if(config('platform.chatbot_enabled'))
     @include('layouts.chatbot-widget')
+    @endif
 
 </body>
 </html> 

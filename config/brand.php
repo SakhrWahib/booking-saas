@@ -3,9 +3,10 @@
 // إعدادات النشاط التجاري (SaaS): القيم هنا افتراضية من .env،
 // وما يحفظه صاحب النشاط من لوحة التحكم (الإعدادات) يُقدَّم عليها تلقائيًا
 return [
-    'name' => env('BRAND_NAME', 'كات شوب'),
-    'name_en' => env('BRAND_NAME_EN', 'Cat Shop'),
-    'business_type' => env('BRAND_BUSINESS_TYPE', 'pet_grooming'),
+    // الاسم الافتراضي: اسم سجل النشاط (Brand::load)، وإلا اسم المنصة
+    'name' => env('BRAND_NAME', 'موعد كلاود'),
+    'name_en' => env('BRAND_NAME_EN', 'MawidCloud'),
+    'business_type' => env('BRAND_BUSINESS_TYPE', 'other'),
     'tagline' => env('BRAND_TAGLINE', 'احجز موعدك بسهولة في دقيقة'),
     'phone' => env('BRAND_PHONE', ''),          // مثال: 05XXXXXXXX
     'whatsapp' => env('BRAND_WHATSAPP', ''),    // مثال: 9665XXXXXXXX (بدون +)
@@ -17,7 +18,10 @@ return [
     'bank_iban' => env('BRAND_BANK_IBAN', ''),
     'bank_account_number' => env('BRAND_BANK_ACCOUNT_NUMBER', ''),
     'primary_color' => env('BRAND_PRIMARY_COLOR', '#7c3aed'),
-    'logo' => env('BRAND_LOGO', '/logo.png'),
+    'logo' => env('BRAND_LOGO', '/mawidcloud-logo.svg'),
+    // روابط اختيارية تظهر في القالب العام إن وُجدت
+    'store_url' => env('BRAND_STORE_URL', ''),
+    'android_app_url' => env('BRAND_ANDROID_APP_URL', ''),
     'service_label' => env('BRAND_SERVICE_LABEL', ''),
     'provider_label' => env('BRAND_PROVIDER_LABEL', ''),
 
