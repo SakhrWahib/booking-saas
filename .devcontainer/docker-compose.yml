@@ -6,6 +6,9 @@ services:
     volumes:
       - ../..:/workspaces:cached
     command: sleep infinity
+    # publish the dev server so the Codespaces port forwarder can reach it (#1)
+    ports:
+      - "8000:8000"
     environment:
       XDEBUG_MODE: "off"
     depends_on:
