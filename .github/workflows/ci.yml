@@ -55,3 +55,6 @@ jobs:
         run: php artisan config:cache && php artisan route:cache && php artisan event:cache && php artisan optimize:clear
       - name: Database backup works
         run: php artisan migrate --force && php artisan backup:database && ls -la storage/app/backups
+      - name: Show application errors on failure
+        if: failure()
+        run: grep -E "local\.(ERROR|CRITICAL)" -A3 storage/logs/laravel.log | cut -c1-400 | tail -40 || true
