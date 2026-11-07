@@ -161,7 +161,7 @@ class BookingController extends Controller
             'customers' => Customer::orderBy('name')->get(['id', 'name', 'phone']),
             'products' => $products->map(fn ($p) => [
                 'id' => $p->id, 'name' => $p->name, 'price' => (float) $p->price,
-                'add_ons' => array_values(array_map(fn ($a) => ['name' => $a['name'] ?? '', 'price' => (float) ($a['price'] ?? 0)], $p->add_ons ?? [])),
+                'add_ons' => array_values(array_map(fn ($a) => ['name' => $a['name'] ?? '', 'price' => (float) ($a['price'] ?? 0)], collect($p->add_ons ?? [])->map(fn ($a) => (array) $a)->all())),
             ])->values(),
             'providers' => $providers->map(fn ($s) => [
                 'id' => $s->id, 'name' => $s->name, 'product_ids' => array_map('intval', $s->product_ids ?? []),

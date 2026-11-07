@@ -23,7 +23,7 @@ class BookingQuote
     public static function make(Product $product, array $addOnNames = [], int $quantity = 1, ?string $couponCode = null): self
     {
         $chosen = array_values(array_filter(
-            $product->add_ons ?? [],
+            collect($product->add_ons ?? [])->map(fn ($a) => (array) $a)->all(),
             fn ($a) => in_array($a['name'] ?? null, $addOnNames, true)
         ));
         $addOns = array_map(fn ($a) => [
