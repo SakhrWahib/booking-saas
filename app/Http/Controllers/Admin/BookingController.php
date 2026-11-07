@@ -12,22 +12,18 @@ use App\Support\BookingQuote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 
-class BookingController extends Controller implements HasMiddleware
+class BookingController extends Controller
 {
     // المسار كله يحتاج bookings.view، وكل إجراء يحتاج صلاحيته الخاصة
-    public static function middleware(): array
+    public function __construct()
     {
-        return [
-            new Middleware('permission:bookings.create', only: ['create', 'store']),
-            new Middleware('permission:bookings.edit', only: ['edit', 'update']),
-            new Middleware('permission:bookings.delete', only: ['destroy']),
-            new Middleware('permission:bookings.confirm', only: ['confirm']),
-            new Middleware('permission:bookings.complete', only: ['complete']),
-            new Middleware('permission:bookings.cancel', only: ['cancel']),
-        ];
+        $this->middleware('permission:bookings.create')->only(['create', 'store']);
+        $this->middleware('permission:bookings.edit')->only(['edit', 'update']);
+        $this->middleware('permission:bookings.delete')->only(['destroy']);
+        $this->middleware('permission:bookings.confirm')->only(['confirm']);
+        $this->middleware('permission:bookings.complete')->only(['complete']);
+        $this->middleware('permission:bookings.cancel')->only(['cancel']);
     }
 
     /**
