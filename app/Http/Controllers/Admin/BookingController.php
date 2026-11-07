@@ -355,8 +355,9 @@ class BookingController extends Controller
             return $blocked;
         }
 
-        $booking->completeBooking();
+        // الدفع أولًا: تسجيل الفاتورة مدفوعة يغيّر حالة الحجز إلى paid، ثم الإكمال يضبطها نهائيًا
         $booking->invoice?->markAsPaid('cash', 'تم الدفع عند إكمال الخدمة');
+        $booking->refresh()->completeBooking();
 
         return back()->with('success', 'تم إكمال الحجز #' . $booking->booking_number);
     }

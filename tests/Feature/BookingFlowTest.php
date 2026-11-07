@@ -163,13 +163,13 @@ class BookingFlowTest extends TestCase
 
         // حفظ بدون تغيير الموعد لا يعتبر تعارضًا مع نفسه
         $this->actingAs($this->admin)->put("/admin/bookings/{$first->id}", $payload(['admin_notes' => 'ملاحظة']))->assertSessionHasNoErrors();
+        $this->assertSame('ملاحظة', $this->reload($first)->admin_notes);
         // نقل الحجز الأول إلى موعد الثاني ممنوع
         $this->actingAs($this->admin)->put("/admin/bookings/{$first->id}", $payload(['booking_time' => '11:00']))->assertSessionHasErrors('booking_time');
         // نقله إلى موعد فارغ مسموح
         $this->actingAs($this->admin)->put("/admin/bookings/{$first->id}", $payload(['booking_time' => '13:00']))->assertSessionHasNoErrors();
 
         $this->assertSame('13:00', \Carbon\Carbon::parse($this->reload($first)->booking_time)->format('H:i'));
-        $this->assertSame('ملاحظة', $this->reload($first)->admin_notes);
         $this->assertSame('11:00', \Carbon\Carbon::parse($this->reload($second)->booking_time)->format('H:i'));
     }
 
