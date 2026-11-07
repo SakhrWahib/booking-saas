@@ -256,19 +256,27 @@ class Booking extends Model
     /**
      * التحقق من توفر الوقت للحجز
      */
+    // الحالات التي تشغل الموعد (الملغي والمكتمل لا يشغلانه)
+    public const OCCUPYING_STATUSES = ['pending', 'confirmed', 'paid'];
+
+    /**
+     * هل الموعد متاح؟ يحترم الطاقة الاستيعابية والإجازات، ويستثني الحجز نفسه عند التعديل
+     */
     public static function isTimeSlotAvailable($date, $time, $serviceProviderId, $excludeBookingId = null)
     {
-        $query = static::where('booking_date', $date)
-            ->where('booking_time', $time)
-            ->where('service_provider_id', $serviceProviderId)
-            ->whereIn('status', ['pending', 'confirmed']);
-            
-        // استثناء حجز معين (مفيد عند التعديل)
-        if ($excludeBookingId) {
-            $query->where('id', '!=', $excludeBookingId);
+        $provider = ServiceProvider::find($serviceProviderId);
+        if (!$provider || $provider->isOnTimeOff($date)) {
+            return false;
         }
-        
-        return !$query->exists();
+
+        $taken = static::whereDate('booking_date', $date)
+            ->whereTime('booking_time', Carbon::parse($time)->format('H:i:s'))
+            ->where('service_provider_id', $serviceProviderId)
+            ->whereIn('status', self::OCCUPYING_STATUSES)
+            ->when($excludeBookingId, fn ($q) => $q->where('id', '!=', $excludeBookingId))
+            ->count();
+
+        return $taken < $provider->slotCapacity();
     }
 
     /**
@@ -546,7 +554,7 @@ class Booking extends Model
     /**
      * الحصول على الأوقات المتاحة مع معلومات الفترة
      */
-    public static function getAvailableTimeSlotsWithPeriods($date, $serviceProviderId)
+    public static function getAvailableTimeSlotsWithPeriods($date, $serviceProviderId, $excludeBookingId = null)
     {
         // التحقق من صلاحية التاريخ أولاً
         if (!self::isValidWorkingDate($date, $serviceProviderId)) {
@@ -591,7 +599,8 @@ class Booking extends Model
         // عدد الحجوزات القائمة في كل موعد (المدفوعة تحجز الموعد أيضًا)
         $bookedCounts = static::whereDate('booking_date', $date)
             ->where('service_provider_id', $serviceProviderId)
-            ->whereIn('status', ['pending', 'confirmed', 'paid'])
+            ->whereIn('status', self::OCCUPYING_STATUSES)
+            ->when($excludeBookingId, fn ($q) => $q->where('id', '!=', $excludeBookingId))
             ->pluck('booking_time')
             ->map(fn ($time) => Carbon::parse($time)->format('H:i'))
             ->countBy()

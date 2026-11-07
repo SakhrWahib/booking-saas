@@ -8,12 +8,28 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\ServiceProvider;
 use App\Models\Coupon;
+use App\Support\BookingQuote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class BookingController extends Controller
+class BookingController extends Controller implements HasMiddleware
 {
+    // المسار كله يحتاج bookings.view، وكل إجراء يحتاج صلاحيته الخاصة
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:bookings.create', only: ['create', 'store']),
+            new Middleware('permission:bookings.edit', only: ['edit', 'update']),
+            new Middleware('permission:bookings.delete', only: ['destroy']),
+            new Middleware('permission:bookings.confirm', only: ['confirm']),
+            new Middleware('permission:bookings.complete', only: ['complete']),
+            new Middleware('permission:bookings.cancel', only: ['cancel']),
+        ];
+    }
+
     /**
      * عرض قائمة الحجوزات
      */
@@ -74,33 +90,19 @@ class BookingController extends Controller
     }
 
     /**
-     * عرض نموذج إنشاء حجز جديد
+     * نموذج إنشاء حجز جديد
      */
-    public function create()
+    public function create(Request $request)
     {
-        $customers = Customer::orderBy('name')->get();
-        $products = Product::orderBy('name')->get();
-        $serviceProviders = ServiceProvider::orderBy('name')->get();
-        $coupons = Coupon::active()->get();
-        
-        // الحصول على الأوقات المتاحة من أول مقدم خدمة أو الأوقات الثابتة
-        $availableTimes = Booking::AVAILABLE_TIMES; // fallback
-        if ($serviceProviders->isNotEmpty()) {
-            $firstProvider = $serviceProviders->first();
-            $serviceProvider = ServiceProvider::with('workingSchedule.activeTimeSlots')->find($firstProvider->id);
-            if ($serviceProvider && $serviceProvider->workingSchedule) {
-                $dbTimes = $serviceProvider->workingSchedule->getAvailableTimesArray();
-                if (!empty($dbTimes)) {
-                    $availableTimes = $dbTimes;
-                }
-            }
-        }
-
-        return view('admin.bookings.create', compact('customers', 'products', 'serviceProviders', 'availableTimes', 'coupons'));
+        return view('admin.bookings.form', $this->formData(new Booking([
+            'booking_date' => $request->date ?? today()->toDateString(),
+            'quantity' => 1,
+            'status' => 'pending',
+        ])));
     }
 
     /**
-     * حفظ حجز جديد
+     * حفظ حجز جديد: العميل (موجود أو جديد)، والسعر من الخادم، ومنع تضارب المواعيد
      */
     public function store(Request $request)
     {
@@ -108,138 +110,125 @@ class BookingController extends Controller
             return back()->withInput()->with('error', plan_limit_message('monthly_bookings'));
         }
 
-        // الحصول على الأوقات المتاحة من قاعدة البيانات
-        $availableTimes = [];
-        if ($request->service_provider_id) {
-            $serviceProvider = ServiceProvider::with('workingSchedule.activeTimeSlots')->find($request->service_provider_id);
-            if ($serviceProvider && $serviceProvider->workingSchedule) {
-                $availableTimes = $serviceProvider->workingSchedule->getAvailableTimesArray();
-            }
-        }
-        
-        // إذا لم توجد أوقات متاحة، استخدم الأوقات الثابتة كـ fallback
-        if (empty($availableTimes)) {
-            $availableTimes = Booking::AVAILABLE_TIMES;
+        $data = $this->validateBooking($request);
+        $customerId = $this->resolveCustomer($request);
+        $product = Product::findOrFail($data['product_id']);
+
+        if ($error = $this->slotError($data)) {
+            return back()->withErrors($error)->withInput();
         }
 
-        $rules = [
-            'customer_id' => 'required|exists:customers,id,tenant_id,' . tenant_id(),
+        $quote = BookingQuote::make($product, $data['add_ons'] ?? [], (int) ($data['quantity'] ?? 1), $data['coupon_code'] ?? null);
+
+        $booking = DB::transaction(function () use ($data, $customerId, $quote) {
+            $booking = Booking::create([
+                'booking_number' => Booking::generateBookingNumber(),
+                'customer_id' => $customerId,
+                'product_id' => $data['product_id'],
+                'service_provider_id' => $data['service_provider_id'],
+                'booking_date' => $data['booking_date'],
+                'booking_time' => $data['booking_time'],
+                'quantity' => (int) ($data['quantity'] ?? 1),
+                'selected_add_ons' => $quote->addOns,
+                'status' => 'pending',
+                'notes' => $data['notes'] ?? null,
+                'admin_notes' => $data['admin_notes'] ?? null,
+                'booking_source' => 'admin_panel',
+                'coupon_id' => $quote->coupon?->id,
+                'discount_amount' => $quote->discount,
+                'total_price' => $quote->total,
+            ]);
+            $quote->coupon?->incrementUsage();
+
+            if (!$booking->invoice) {
+                \App\Models\Invoice::createFromBooking($booking, auth()->id());
+            }
+
+            return $booking;
+        });
+
+        return redirect()->route('admin.bookings.show', $booking)->with('success', 'تم إنشاء الحجز #' . $booking->booking_number);
+    }
+
+    /**
+     * بيانات نموذج الحجز (إنشاء وتعديل) جاهزة لـ Alpine.js
+     */
+    private function formData(Booking $booking): array
+    {
+        $products = Product::where('is_active', true)->orWhere('id', $booking->product_id)->orderBy('name')
+            ->get(['id', 'name', 'price', 'add_ons', 'service_provider_ids']);
+        $providers = ServiceProvider::where('is_active', true)->orWhere('id', $booking->service_provider_id)->orderBy('name')
+            ->get(['id', 'name', 'product_ids', 'capacity', 'work_type']);
+
+        return [
+            'booking' => $booking,
+            'customers' => Customer::orderBy('name')->get(['id', 'name', 'phone']),
+            'products' => $products->map(fn ($p) => [
+                'id' => $p->id, 'name' => $p->name, 'price' => (float) $p->price,
+                'add_ons' => array_values(array_map(fn ($a) => ['name' => $a['name'] ?? '', 'price' => (float) ($a['price'] ?? 0)], $p->add_ons ?? [])),
+            ])->values(),
+            'providers' => $providers->map(fn ($s) => [
+                'id' => $s->id, 'name' => $s->name, 'product_ids' => array_map('intval', $s->product_ids ?? []),
+            ])->values(),
+        ];
+    }
+
+    private function validateBooking(Request $request, bool $editing = false): array
+    {
+        return $request->validate([
+            'customer_id' => ['nullable', 'required_without:new_customer_phone', 'exists:customers,id,tenant_id,' . tenant_id()],
+            'new_customer_name' => 'nullable|required_with:new_customer_phone|string|max:100',
+            'new_customer_phone' => ['nullable', 'regex:/^05\d{8}$/'],
             'product_id' => 'required|exists:products,id,tenant_id,' . tenant_id(),
             'service_provider_id' => 'required|exists:service_providers,id,tenant_id,' . tenant_id(),
-            'booking_date' => 'required|date|after_or_equal:today',
-            'booking_time' => 'required|in:' . implode(',', $availableTimes),
-            'quantity' => 'nullable|integer|min:1',
-            'selected_add_ons' => 'nullable|array',
-            'selected_add_ons.*.option' => 'required_with:selected_add_ons|string',
-            'selected_add_ons.*.name' => 'required_with:selected_add_ons|string',
-            'selected_add_ons.*.price' => 'required_with:selected_add_ons|numeric|min:0',
-            'selected_add_ons.*.image' => 'nullable|string',
+            'booking_date' => $editing ? 'required|date' : 'required|date|after_or_equal:today',
+            'booking_time' => 'required|date_format:H:i',
+            'quantity' => 'nullable|integer|min:1|max:20',
+            'add_ons' => 'nullable|array',
+            'add_ons.*' => 'string|max:150',
             'coupon_code' => 'nullable|string|max:50',
-            'notes' => 'nullable|string',
-            'admin_notes' => 'nullable|string',
-            'booking_source' => 'nullable|in:admin_panel,website'
-        ];
-
-        // تعيين قيمة افتراضية لـ booking_source
-        if (!$request->has('booking_source') || empty($request->booking_source)) {
-            $request->merge(['booking_source' => 'admin_panel']);
-        }
-
-        // إضافة قواعد إضافية للحجوزات من الموقع الإلكتروني
-        if ($request->booking_source === 'website') {
-            $rules = array_merge($rules, [
-                'customer_latitude' => 'required|numeric|between:-90,90',
-                'customer_longitude' => 'required|numeric|between:-180,180',
-                'customer_address' => 'required|string|max:500',
-                'location_map_url' => 'nullable|url',
-                'is_riyadh_confirmed' => 'required|boolean',
-                'customer_notes' => 'nullable|string',
-                'attachments' => 'nullable|array'
-            ]);
-        }
-
-        $request->validate($rules);
-
-        // التحقق من صلاحية الوقت مع قاعدة البيانات
-        if (!Booking::isValidTime($request->booking_time, $request->service_provider_id)) {
-            return back()->withErrors(['booking_time' => 'وقت الحجز المحدد غير صالح'])->withInput();
-        }
-
-        // التحقق من صلاحية التاريخ مع جدول أوقات العمل
-        if (!Booking::isValidWorkingDate($request->booking_date, $request->service_provider_id)) {
-            $errorMessage = Booking::getDateValidationMessage($request->booking_date, $request->service_provider_id);
-            return back()->withErrors(['booking_date' => $errorMessage])->withInput();
-        }
-
-        // التحقق من توفر الوقت
-        if (!Booking::isTimeSlotAvailable($request->booking_date, $request->booking_time, $request->service_provider_id)) {
-            return back()->withErrors(['booking_time' => 'هذا الوقت محجوز مسبقاً'])->withInput();
-        }
-
-        // التحقق من نطاق التغطية للحجوزات من الموقع الإلكتروني
-        if ($request->booking_source === 'website') {
-            if (!Booking::isWithinServiceArea($request->customer_latitude, $request->customer_longitude, $request->service_provider_id)) {
-                return back()->withErrors(['customer_address' => 'نعتذر، موقعك خارج نطاق التغطية المتاح'])->withInput();
-            }
-        }
-
-        // معالجة الكوبون
-        $couponId = null;
-        $discountAmount = 0;
-        
-        if ($request->filled('coupon_code')) {
-            $coupon = Coupon::findValidByCode($request->coupon_code);
-            if ($coupon) {
-                // حساب السعر الإجمالي للمقارنة مع الحد الأدنى للكوبون
-                $product = Product::find($request->product_id);
-                $addOnsTotal = 0;
-                if ($request->selected_add_ons) {
-                    foreach ($request->selected_add_ons as $addOn) {
-                        $addOnsTotal += $addOn['price'] ?? 0;
-                    }
-                }
-                $totalAmount = ($product->price + $addOnsTotal) * ($request->quantity ?? 1);
-                
-                if ($coupon->isValidForAmount($totalAmount)) {
-                    $couponId = $coupon->id;
-                    $discountAmount = $coupon->calculateDiscount($totalAmount);
-                    // زيادة عدد مرات الاستخدام
-                    $coupon->incrementUsage();
-                }
-            }
-        }
-
-        // إنشاء الحجز
-        $booking = Booking::create([
-            'booking_number' => Booking::generateBookingNumber(),
-            'customer_id' => $request->customer_id,
-            'product_id' => $request->product_id,
-            'service_provider_id' => $request->service_provider_id,
-            'booking_date' => $request->booking_date,
-            'booking_time' => $request->booking_time,
-            'quantity' => $request->quantity ?? 1,
-            'selected_add_ons' => $request->selected_add_ons,
-            'status' => 'pending',
-            'notes' => $request->notes,
-            'admin_notes' => $request->admin_notes,
-            'booking_source' => $request->booking_source ?? 'admin_panel',
-            'customer_latitude' => $request->customer_latitude,
-            'customer_longitude' => $request->customer_longitude,
-            'customer_address' => $request->customer_address,
-            'location_map_url' => $request->location_map_url,
-            'is_riyadh_confirmed' => $request->is_riyadh_confirmed ?? false,
-            'customer_notes' => $request->customer_notes,
-            'attachments' => $request->attachments,
-            'coupon_id' => $couponId,
-            'discount_amount' => $discountAmount
+            'notes' => 'nullable|string|max:2000',
+            'admin_notes' => 'nullable|string|max:2000',
+            'status' => $editing ? 'required|in:pending,confirmed,paid,completed,cancelled' : 'nullable',
+        ], [
+            'customer_id.required_without' => 'اختر عميلًا أو أدخل بيانات عميل جديد',
+            'new_customer_phone.regex' => 'رقم الجوال يجب أن يكون بصيغة 05XXXXXXXX',
+            'booking_date.after_or_equal' => 'لا يمكن الحجز في تاريخ سابق',
+            'booking_time.required' => 'اختر وقت الموعد',
         ]);
+    }
 
-        // إنشاء فاتورة تلقائياً للحجز الجديد
-        if (!$booking->invoice) {
-            $invoice = \App\Models\Invoice::createFromBooking($booking, auth()->id());
+    // عميل موجود، أو عميل جديد (أو موجود بنفس الجوال في هذا النشاط)
+    private function resolveCustomer(Request $request): int
+    {
+        if ($request->filled('new_customer_phone')) {
+            return Customer::firstOrCreate(
+                ['phone' => $request->new_customer_phone],
+                ['name' => $request->new_customer_name]
+            )->id;
         }
 
-        return redirect()->route('admin.bookings.index')->with('success', 'تم إنشاء الحجز بنجاح');
+        return (int) $request->customer_id;
+    }
+
+    // رسالة خطأ إن كان الموعد غير صالح أو ممتلئ، وإلا null
+    private function slotError(array $data, ?int $excludeId = null): ?array
+    {
+        $provider = ServiceProvider::find($data['service_provider_id']);
+        $product = (int) $data['product_id'];
+
+        if ($provider && !empty($provider->product_ids) && !in_array($product, array_map('intval', $provider->product_ids), true)) {
+            return ['service_provider_id' => 'مقدّم الخدمة المختار لا يقدّم هذه الخدمة'];
+        }
+        if (!Booking::isValidWorkingDate($data['booking_date'], $data['service_provider_id'])) {
+            return ['booking_date' => Booking::getDateValidationMessage($data['booking_date'], $data['service_provider_id'])];
+        }
+        $times = array_column(Booking::getAvailableTimeSlotsWithPeriods($data['booking_date'], $data['service_provider_id'], $excludeId), 'time');
+        if (!in_array($data['booking_time'], $times, true)) {
+            return ['booking_time' => 'هذا الموعد غير متاح (ممتلئ أو خارج أوقات العمل أو في إجازة)'];
+        }
+
+        return null;
     }
 
     /**
@@ -252,195 +241,70 @@ class BookingController extends Controller
     }
 
     /**
-     * عرض نموذج تعديل الحجز
+     * نموذج تعديل الحجز
      */
     public function edit(Booking $booking)
     {
-        $customers = Customer::orderBy('name')->get();
-        $products = Product::orderBy('name')->get();
-        $serviceProviders = ServiceProvider::orderBy('name')->get();
-        $coupons = Coupon::active()->get();
-        
-        // تحميل علاقة الكوبون مع الحجز
         $booking->load('coupon');
-        
-        // الحصول على الأوقات المتاحة من مقدم الخدمة الحالي أو الأوقات الثابتة
-        $availableTimes = Booking::AVAILABLE_TIMES; // fallback
-        if ($booking->service_provider_id) {
-            $serviceProvider = ServiceProvider::with('workingSchedule.activeTimeSlots')->find($booking->service_provider_id);
-            if ($serviceProvider && $serviceProvider->workingSchedule) {
-                $dbTimes = $serviceProvider->workingSchedule->getAvailableTimesArray();
-                if (!empty($dbTimes)) {
-                    $availableTimes = $dbTimes;
-                }
-            }
-        }
 
-        return view('admin.bookings.edit', compact('booking', 'customers', 'products', 'serviceProviders', 'availableTimes', 'coupons'));
+        return view('admin.bookings.form', $this->formData($booking));
     }
 
     /**
-     * تحديث الحجز
+     * تحديث الحجز: نفس قواعد الإنشاء، والموعد يُتحقق منه فقط إذا تغيّر
      */
     public function update(Request $request, Booking $booking)
     {
-        // الحصول على الأوقات المتاحة من قاعدة البيانات
-        $availableTimes = [];
-        if ($request->service_provider_id) {
-            $serviceProvider = ServiceProvider::with('workingSchedule.activeTimeSlots')->find($request->service_provider_id);
-            if ($serviceProvider && $serviceProvider->workingSchedule) {
-                $availableTimes = $serviceProvider->workingSchedule->getAvailableTimesArray();
-            }
-        }
-        
-        // إذا لم توجد أوقات متاحة، استخدم الأوقات الثابتة كـ fallback
-        if (empty($availableTimes)) {
-            $availableTimes = Booking::AVAILABLE_TIMES;
-        }
+        $data = $this->validateBooking($request, editing: true);
+        $customerId = $this->resolveCustomer($request);
+        $product = Product::findOrFail($data['product_id']);
 
-        $rules = [
-            'customer_id' => 'required|exists:customers,id,tenant_id,' . tenant_id(),
-            'product_id' => 'required|exists:products,id,tenant_id,' . tenant_id(),
-            'service_provider_id' => 'required|exists:service_providers,id,tenant_id,' . tenant_id(),
-            'booking_date' => 'required|date',
-            'booking_time' => 'required|in:' . implode(',', $availableTimes),
-            'quantity' => 'nullable|integer|min:1',
-            'selected_add_ons' => 'nullable|array',
-            'selected_add_ons.*.option' => 'required_with:selected_add_ons|string',
-            'selected_add_ons.*.name' => 'required_with:selected_add_ons|string',
-            'selected_add_ons.*.price' => 'required_with:selected_add_ons|numeric|min:0',
-            'selected_add_ons.*.image' => 'nullable|string',
-            'coupon_code' => 'nullable|string|max:50',
-            'status' => 'required|in:pending,confirmed,paid,completed,cancelled',
-            'notes' => 'nullable|string',
-            'admin_notes' => 'nullable|string',
-            'customer_notes' => 'nullable|string'
-        ];
+        $slotChanged = $booking->service_provider_id != $data['service_provider_id']
+            || Carbon::parse($booking->booking_date)->toDateString() !== $data['booking_date']
+            || Carbon::parse($booking->booking_time)->format('H:i') !== $data['booking_time'];
+        $occupies = in_array($data['status'], Booking::OCCUPYING_STATUSES, true);
 
-        // إضافة قواعد إضافية للحجوزات من الموقع الإلكتروني
-        if ($booking->booking_source === 'website') {
-            $rules = array_merge($rules, [
-                'customer_latitude' => 'nullable|numeric|between:-90,90',
-                'customer_longitude' => 'nullable|numeric|between:-180,180',
-                'customer_address' => 'nullable|string|max:500',
-                'location_map_url' => 'nullable|url',
-                'is_riyadh_confirmed' => 'nullable|boolean',
-                'attachments' => 'nullable|array'
-            ]);
+        if ($slotChanged && $occupies && ($error = $this->slotError($data, $booking->id))) {
+            return back()->withErrors($error)->withInput();
         }
 
-        $request->validate($rules);
+        // الكوبون الحالي يبقى إن لم يُغيَّر، والجديد يُحتسب استخدامه مرة واحدة
+        $couponCode = $data['coupon_code'] ?? $booking->coupon?->code;
+        $quote = BookingQuote::make($product, $data['add_ons'] ?? [], (int) ($data['quantity'] ?? 1), $couponCode);
 
-        // التحقق من صلاحية الوقت مع قاعدة البيانات
-        if (!Booking::isValidTime($request->booking_time, $request->service_provider_id)) {
-            return back()->withErrors(['booking_time' => 'وقت الحجز المحدد غير صالح'])->withInput();
-        }
+        DB::transaction(function () use ($booking, $data, $customerId, $quote) {
+            $isNewCoupon = $quote->coupon && $quote->coupon->id !== $booking->coupon_id;
 
-        // التحقق من صلاحية التاريخ مع جدول أوقات العمل
-        if (!Booking::isValidWorkingDate($request->booking_date, $request->service_provider_id)) {
-            $errorMessage = Booking::getDateValidationMessage($request->booking_date, $request->service_provider_id);
-            return back()->withErrors(['booking_date' => $errorMessage])->withInput();
-        }
-
-        // التحقق من توفر الوقت (إذا تم تغيير التاريخ أو الوقت أو مقدم الخدمة)
-        if ($booking->booking_date != $request->booking_date || 
-            $booking->booking_time != $request->booking_time || 
-            $booking->service_provider_id != $request->service_provider_id) {
-            
-            if (!Booking::isTimeSlotAvailable($request->booking_date, $request->booking_time, $request->service_provider_id, $booking->id)) {
-                return back()->withErrors(['booking_time' => 'هذا الوقت محجوز مسبقاً'])->withInput();
-            }
-        }
-
-        // التحقق من نطاق التغطية للحجوزات من الموقع الإلكتروني
-        if ($booking->booking_source === 'website' && $request->filled('customer_latitude') && $request->filled('customer_longitude')) {
-            if (!Booking::isWithinServiceArea($request->customer_latitude, $request->customer_longitude, $request->service_provider_id)) {
-                return back()->withErrors(['customer_address' => 'نعتذر، موقعك خارج نطاق التغطية المتاح'])->withInput();
-            }
-        }
-
-        DB::transaction(function () use ($request, $booking) {
-            // معالجة الكوبون
-            $couponId = null;
-            $discountAmount = 0;
-            
-            if ($request->filled('coupon_code')) {
-                $coupon = Coupon::findValidByCode($request->coupon_code);
-                if ($coupon) {
-                    // حساب السعر الإجمالي للمقارنة مع الحد الأدنى للكوبون
-                    $product = Product::find($request->product_id);
-                    $addOnsTotal = 0;
-                    if ($request->selected_add_ons) {
-                        foreach ($request->selected_add_ons as $addOn) {
-                            $addOnsTotal += $addOn['price'] ?? 0;
-                        }
-                    }
-                    $totalAmount = ($product->price + $addOnsTotal) * ($request->quantity ?? 1);
-                    
-                    if ($coupon->isValidForAmount($totalAmount)) {
-                        $couponId = $coupon->id;
-                        $discountAmount = $coupon->calculateDiscount($totalAmount);
-                        // زيادة عدد مرات الاستخدام
-                        $coupon->incrementUsage();
-                    }
-                }
-            }
-
-            $updateData = [
-                'customer_id' => $request->customer_id,
-                'product_id' => $request->product_id,
-                'service_provider_id' => $request->service_provider_id,
-                'booking_date' => $request->booking_date,
-                'booking_time' => $request->booking_time,
-                'quantity' => $request->quantity ?? 1,
-                'selected_add_ons' => $request->selected_add_ons,
-                'status' => $request->status,
-                'notes' => $request->notes,
-                'admin_notes' => $request->admin_notes,
-                'customer_notes' => $request->customer_notes,
-                'coupon_id' => $couponId,
-                'discount_amount' => $discountAmount
+            $changes = [
+                'customer_id' => $customerId,
+                'product_id' => $data['product_id'],
+                'service_provider_id' => $data['service_provider_id'],
+                'booking_date' => $data['booking_date'],
+                'booking_time' => $data['booking_time'],
+                'quantity' => (int) ($data['quantity'] ?? 1),
+                'selected_add_ons' => $quote->addOns,
+                'status' => $data['status'],
+                'notes' => $data['notes'] ?? null,
+                'admin_notes' => $data['admin_notes'] ?? null,
+                'coupon_id' => $quote->coupon?->id,
+                'discount_amount' => $quote->discount,
+                'total_price' => $quote->total,
             ];
-
-            // إضافة بيانات الموقع للحجوزات من الموقع الإلكتروني
-            if ($booking->booking_source === 'website') {
-                $updateData = array_merge($updateData, [
-                    'customer_latitude' => $request->customer_latitude,
-                    'customer_longitude' => $request->customer_longitude,
-                    'customer_address' => $request->customer_address,
-                    'location_map_url' => $request->location_map_url,
-                    'is_riyadh_confirmed' => $request->is_riyadh_confirmed ?? false,
-                    'attachments' => $request->attachments
-                ]);
-            }
-
-            // إضافة تواريخ تغيير الحالة
-            if ($booking->status !== $request->status) {
-                switch ($request->status) {
-                    case 'confirmed':
-                        $updateData['confirmed_at'] = now();
-                        break;
-                    case 'completed':
-                        $updateData['completed_at'] = now();
-                        break;
-                    case 'cancelled':
-                        $updateData['cancelled_at'] = now();
-                        break;
+            if ($booking->status !== $data['status']) {
+                $stamp = ['confirmed' => 'confirmed_at', 'completed' => 'completed_at', 'cancelled' => 'cancelled_at'][$data['status']] ?? null;
+                if ($stamp) {
+                    $changes[$stamp] = now();
                 }
             }
 
-            $booking->update($updateData);
-            
-            // إعادة حساب السعر الإجمالي
-            $booking->calculateAndSaveTotalPrice();
-            
-            // تحديث الفاتورة المرتبطة إذا وجدت
-            if ($booking->invoice) {
-                $booking->invoice->updateFromBooking($booking);
+            $booking->update($changes);
+            if ($isNewCoupon) {
+                $quote->coupon->incrementUsage();
             }
+            $booking->invoice?->updateFromBooking($booking);
         });
 
-        return redirect()->route('admin.bookings.index')->with('success', 'تم تحديث الحجز بنجاح');
+        return redirect()->route('admin.bookings.show', $booking)->with('success', 'تم تحديث الحجز');
     }
 
     /**
@@ -455,179 +319,97 @@ class BookingController extends Controller
     /**
      * تأكيد الحجز
      */
-    public function confirm(Booking $booking)
+    // الانتقالات المسموحة بين الحالات
+    private const TRANSITIONS = [
+        'confirm' => ['pending'],
+        'complete' => ['confirmed', 'paid'],
+        'cancel' => ['pending', 'confirmed', 'paid'],
+    ];
+
+    private function guardTransition(Booking $booking, string $action)
     {
-        $booking->confirmBooking();
-        
-        // إنشاء فاتورة تلقائياً عند تأكيد الحجز
-        if (!$booking->invoice) {
-            $invoice = \App\Models\Invoice::createFromBooking($booking, auth()->id());
-            
-            return redirect()->route('admin.invoices.show', $invoice)
-                ->with('success', 'تم تأكيد الحجز وإنشاء الفاتورة بنجاح');
-        } else {
-            // تحديث الفاتورة الموجودة
-            $booking->invoice->updateFromBooking($booking);
-            
-            return redirect()->route('admin.invoices.show', $booking->invoice)
-                ->with('success', 'تم تأكيد الحجز وتحديث الفاتورة بنجاح');
-        }
+        return in_array($booking->status, self::TRANSITIONS[$action], true)
+            ? null
+            : back()->with('error', 'لا يمكن تنفيذ هذا الإجراء على حجز حالته الحالية');
     }
 
     /**
-     * إكمال الحجز
+     * تأكيد الحجز (وإنشاء أو تحديث فاتورته)
+     */
+    public function confirm(Booking $booking)
+    {
+        if ($blocked = $this->guardTransition($booking, 'confirm')) {
+            return $blocked;
+        }
+
+        $booking->confirmBooking();
+        $booking->invoice
+            ? $booking->invoice->updateFromBooking($booking)
+            : \App\Models\Invoice::createFromBooking($booking, auth()->id());
+
+        return back()->with('success', 'تم تأكيد الحجز #' . $booking->booking_number);
+    }
+
+    /**
+     * إكمال الحجز (وتسجيل الفاتورة مدفوعة نقدًا)
      */
     public function complete(Booking $booking)
     {
-        $booking->completeBooking();
-        
-        // إذا كان هناك فاتورة، قم بدفعها تلقائياً
-        if ($booking->invoice) {
-            $booking->invoice->markAsPaid('cash', 'تم الدفع عند إكمال الخدمة');
-            
-            return redirect()->route('admin.invoices.show', $booking->invoice)
-                ->with('success', 'تم إكمال الحجز ودفع الفاتورة بنجاح');
+        if ($blocked = $this->guardTransition($booking, 'complete')) {
+            return $blocked;
         }
-        
-        return redirect()->back()->with('success', 'تم إكمال الحجز بنجاح');
+
+        $booking->completeBooking();
+        $booking->invoice?->markAsPaid('cash', 'تم الدفع عند إكمال الخدمة');
+
+        return back()->with('success', 'تم إكمال الحجز #' . $booking->booking_number);
     }
 
     /**
-     * إلغاء الحجز
+     * إلغاء الحجز (يحرّر الموعد)
      */
     public function cancel(Booking $booking)
     {
+        if ($blocked = $this->guardTransition($booking, 'cancel')) {
+            return $blocked;
+        }
+
         $booking->cancel();
-        return redirect()->back()->with('success', 'تم إلغاء الحجز بنجاح');
+
+        return back()->with('success', 'تم إلغاء الحجز #' . $booking->booking_number);
     }
 
     /**
-     * الحصول على الأوقات المتاحة (AJAX)
+     * المواعيد المتاحة (AJAX): حسب جدول مقدّم الخدمة وإجازاته وطاقته، مع استثناء الحجز عند التعديل
      */
     public function getAvailableTimeSlots(Request $request)
     {
-        try {
-            $request->validate([
-                'date' => 'required|date|after_or_equal:today',
-                'service_provider_id' => 'required|exists:service_providers,id,tenant_id,' . tenant_id(),
-                'exclude_booking_id' => 'nullable|exists:bookings,id,tenant_id,' . tenant_id()
-            ]);
+        $request->validate([
+            'date' => 'required|date',
+            'service_provider_id' => 'required|exists:service_providers,id,tenant_id,' . tenant_id(),
+            'exclude_booking_id' => 'nullable|exists:bookings,id,tenant_id,' . tenant_id(),
+        ]);
 
-            $date = $request->date;
-            $serviceProviderId = $request->service_provider_id;
-            $excludeBookingId = $request->exclude_booking_id;
-
-            // التحقق من أن التاريخ ليس في الماضي
-            $dateCarbon = Carbon::parse($date);
-            if ($dateCarbon->isPast() && !$dateCarbon->isToday()) {
-                return response()->json([
-                    'available_slots' => [],
-                    'is_valid_date' => false,
-                    'message' => 'لا يمكن الحجز في تاريخ سابق'
-                ]);
-            }
-
-            // التحقق من يوم الجمعة
-            if ($dateCarbon->isFriday()) {
-                return response()->json([
-                    'available_slots' => [],
-                    'is_valid_date' => false,
-                    'message' => 'عذراً، يوم الجمعة إجازة'
-                ]);
-            }
-
-            // التحقق من صلاحية التاريخ
-            $isValidDate = Booking::isValidWorkingDate($date, $serviceProviderId);
-            
-            // إذا كان التاريخ غير صالح، نرجع رسالة توضح السبب
-            if (!$isValidDate) {
-                $message = Booking::getDateValidationMessage($date, $serviceProviderId);
-
-                return response()->json([
-                    'available_slots' => [],
-                    'is_valid_date' => false,
-                    'message' => $message
-                ]);
-            }
-
-            // الحصول على الأوقات المتاحة مع معلومات الفترة (مع استثناء حجز معين إذا كان التعديل)
-            $availableSlots = Booking::getAvailableTimeSlotsWithPeriods($date, $serviceProviderId);
-            
-            // إذا كان هناك حجز مستثنى (في حالة التعديل)، أضف وقته إلى الأوقات المتاحة
-            if ($excludeBookingId) {
-                $excludedBooking = Booking::find($excludeBookingId);
-                if ($excludedBooking && 
-                    $excludedBooking->booking_date->format('Y-m-d') === $date &&
-                    $excludedBooking->service_provider_id == $serviceProviderId) {
-                    
-                    $excludedTime = Carbon::parse($excludedBooking->booking_time)->format('H:i');
-                    
-                    // البحث عن معلومات الفترة للوقت المستثنى
-                    $serviceProvider = ServiceProvider::with('workingSchedule.activeTimeSlots')->find($serviceProviderId);
-                    $excludedTimeSlot = null;
-                    
-                    if ($serviceProvider && $serviceProvider->workingSchedule) {
-                        $excludedTimeSlot = $serviceProvider->workingSchedule->activeTimeSlots()
-                            ->where('time', $excludedTime)
-                            ->first();
-                    }
-                    
-                    // التحقق من عدم وجود الوقت في القائمة
-                    $timeExists = false;
-                    foreach ($availableSlots as $slot) {
-                        if ($slot['time'] === $excludedTime) {
-                            $timeExists = true;
-                            break;
-                        }
-                    }
-                    
-                    if (!$timeExists) {
-                        $excludedSlot = [
-                            'time' => $excludedTime,
-                            'period' => $excludedTimeSlot ? $excludedTimeSlot->period : 'afternoon',
-                            'label' => $excludedTimeSlot ? $excludedTimeSlot->label : null
-                        ];
-                        $availableSlots[] = $excludedSlot;
-                        
-                        // ترتيب الأوقات
-                        usort($availableSlots, function($a, $b) {
-                            return strcmp($a['time'], $b['time']);
-                        });
-                    }
-                }
-            }
-            
-            return response()->json([
-                'available_slots' => array_values($availableSlots),
-                'is_valid_date' => true,
-                'message' => count($availableSlots) > 0 ? 'الأوقات المتاحة للحجز' : 'لا توجد أوقات متاحة في هذا اليوم',
-                'date_info' => [
-                    'is_today' => $dateCarbon->isToday(),
-                    'is_future' => $dateCarbon->isFuture(),
-                    'day_name' => $dateCarbon->locale('ar')->translatedFormat('l')
-                ]
-            ]);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'available_slots' => [],
-                'is_valid_date' => false,
-                'message' => 'البيانات المرسلة غير صحيحة',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            \Log::error('Error in getAvailableTimeSlots: ' . $e->getMessage(), [
-                'date' => $request->date,
-                'service_provider_id' => $request->service_provider_id,
-                'stack_trace' => $e->getTraceAsString()
-            ]);
-            
-            return response()->json([
-                'available_slots' => [],
-                'is_valid_date' => false,
-                'message' => 'حدث خطأ أثناء تحميل الأوقات المتاحة، يرجى المحاولة مرة أخرى'
-            ], 500);
+        $date = Carbon::parse($request->date);
+        if ($date->isPast() && !$date->isToday() && !$request->filled('exclude_booking_id')) {
+            return response()->json(['available_slots' => [], 'is_valid_date' => false, 'message' => 'لا يمكن الحجز في تاريخ سابق']);
         }
+
+        if (!Booking::isValidWorkingDate($date->toDateString(), $request->service_provider_id)) {
+            return response()->json([
+                'available_slots' => [],
+                'is_valid_date' => false,
+                'message' => Booking::getDateValidationMessage($date->toDateString(), $request->service_provider_id),
+            ]);
+        }
+
+        $slots = Booking::getAvailableTimeSlotsWithPeriods($date->toDateString(), $request->service_provider_id, $request->exclude_booking_id);
+
+        return response()->json([
+            'available_slots' => $slots,
+            'is_valid_date' => true,
+            'message' => $slots ? 'المواعيد المتاحة' : 'لا توجد مواعيد متاحة في هذا اليوم',
+        ]);
     }
 
     /**
