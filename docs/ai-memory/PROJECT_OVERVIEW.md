@@ -13,7 +13,7 @@ Repo: `SakhrWahib/booking-saas` (currently **public**; changing visibility needs
 | Admin shell (grouped menu, topbar, RTL/LTR, mobile) | ✅ | `config/admin-menu.php` |
 | Dashboard home, bookings list, booking details, customers list, services list, calendar, time off, business settings | ✅ new UI | |
 | Availability: capacity per slot, time off, paid bookings block the slot | ✅ | `AvailabilityTest` |
-| Booking create/edit forms | 🟡 old UI | Day 2 |
+| Booking create/edit (single Alpine form: customer existing/new, service + add-ons, provider by service, live slots with remaining, price summary) | ✅ | `BookingFlowTest` |
 | Service, staff, schedule, customer create/edit | 🟡 old UI | Day 3 |
 | Service categories | ❌ | no table yet (Day 3) |
 | Invoices, coupons, users and roles, reports, notifications | 🟡 old UI | Day 4 |

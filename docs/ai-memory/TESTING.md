@@ -15,10 +15,12 @@
 | TenancyTest | isolation between tenants, per-tenant phone uniqueness, per-tenant site, inactive tenant 503 |
 | PlatformTest | super admin only, one-step tenant onboarding, plan features hide/block, limits, expired subscription 402 |
 | SecurityTest | API needs a token, login rate limit, security headers, `/up`, removed debug routes, OTP compare |
+| BookingFlowTest | form pages; create with server prices + invoice; new customer reuses phone; single-person double booking blocked; team capacity 2; provider must offer the service; outside hours and day off; edit/reschedule conflicts (self excluded); confirm/complete/cancel guards; cancel frees slot; slots endpoint remaining and exclude; cross-tenant 404 and validation; view-only role blocked |
 | DemoSeederTest | demo tenant data counts, idempotent, demo admin login + dashboard pages, blocked in production, no previous-business branding on `/` and login |
 
 ## Last results
 | Date | Branch | Result |
 |---|---|---|
 | 2026-11-05 | main (c88cf61) | 27 passed, 131 assertions |
+| 2026-11-07 | main (Day 2) | 43 passed, 225 assertions + live Codespace: login, create page, slots, create booking, duplicate slot rejected |
 | 2026-11-06 | main (Day 1) | 31 passed, 161 assertions + live Codespace check of login and 9 admin pages |

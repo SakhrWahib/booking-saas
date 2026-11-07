@@ -21,7 +21,9 @@
 ## Key files
 | Concern | Files |
 |---|---|
-| Availability (shared by admin, web, API) | `Booking::getAvailableTimeSlotsWithPeriods()`, `ServiceProvider::slotCapacity()/isOnTimeOff()` |
+| Booking pricing (server side only) | `app/Support/BookingQuote.php`: add-ons chosen by name and priced from `products.add_ons`, quantity, coupon. The total is saved to `bookings.total_price` |
+| Admin booking CRUD | `Admin\BookingController` (`formData`, `validateBooking`, `resolveCustomer`, `slotError`, `TRANSITIONS`), view `admin/bookings/form.blade.php` (create and edit) |
+| Availability (shared by admin, web, API) | `Booking::getAvailableTimeSlotsWithPeriods()`, `ServiceProvider::slotCapacity()/isOnTimeOff()`, `Booking::isTimeSlotAvailable()` (capacity-aware), `Booking::OCCUPYING_STATUSES` |
 | Admin layout and menu | `resources/views/layouts/app.blade.php`, `config/admin-menu.php` |
 | Design system | `resources/css/app.css` (`.card .btn-* .input .label .data-table`, `.admin-main` legacy overrides), components `x-page-header x-stat-card x-status-badge` |
 | Public site (new) | `layouts/site.blade.php`, `frontend/index`, `frontend/products`, `frontend/partials/service-card` |

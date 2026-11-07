@@ -2,7 +2,7 @@
 
 | # | Issue | Impact | Planned |
 |---|---|---|---|
-| 1 | Booking create/edit forms use the old UI (1000+ line Blade with inline JS) | Hard to use | Day 2 |
+| 1 | Old `admin/bookings/create.blade.php` and `edit.blade.php` are no longer used (replaced by `form.blade.php`) | Dead code | **Owner OK to delete** |
 | 2 | No service categories table | Services can't be grouped | Day 3 |
 | 3 | Service/staff/schedule/customer forms use the old UI | Setup is harder for owners | Day 3 |
 | 4 | Invoices, coupons, users and roles, reports pages use the old UI | Inconsistent look | Day 4 |
@@ -15,3 +15,6 @@
 | 11 | Old public repo `SakhrWahib/-beginning1` still holds old phone numbers and Taqnyat code in history | Privacy | **Owner decision** (make private or delete) |
 | 12 | Repo `booking-saas` is public | Code is visible | **Owner decision** |
 | 13 | Online payments, SMS provider, production server | Not launch-ready | After the 5-day plan |
+| 14 | Public booking flow still hardcodes "Friday closed" (`FrontendController` around lines 506 and 583) and `Booking::isValidDate()` | Wrong for tenants open on Friday | Day 5 |
+| 15 | `Booking::getTotalPriceAttribute()` recomputes the total from the **current** product price, overriding the saved `total_price` column when read | Old bookings change price if a service price changes | Day 3/4 (read the saved column) |
+| 16 | Logs contain "Frontend selectAddOns: لا يوجد product_id" when public step pages are opened without a session (SmokeTest) | Noise | Day 5 (redirect instead of logging an error) |
