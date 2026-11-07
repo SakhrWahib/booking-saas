@@ -57,4 +57,4 @@ jobs:
         run: php artisan migrate --force && php artisan backup:database && ls -la storage/app/backups
       - name: Show application errors on failure
         if: failure()
-        run: grep -E "local\.(ERROR|CRITICAL)" -A3 storage/logs/laravel.log | cut -c1-400 | tail -40 || true
+        run: grep -E "\.(ERROR|CRITICAL):" storage/logs/laravel.log | cut -c1-400 | sort | uniq -c | sort -rn | head -20 || true
